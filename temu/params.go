@@ -1,8 +1,6 @@
 package temu
 
-// PageParams 是使用 page、pageSize 字段的接口共用分页参数。
-// 零值时省略，由对应接口决定默认分页行为。
-type PageParams struct {
-	Page     int `json:"page,omitempty"`     // 页码
-	PageSize int `json:"pageSize,omitempty"` // 每页数量
-}
+import "github.com/devlin229/temu-sdk-go/temu/common"
+
+// PageParams 保留原有公共入口，具体定义由客户端和业务模型共用。
+type PageParams = common.PageParams

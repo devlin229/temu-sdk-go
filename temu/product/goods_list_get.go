@@ -1,11 +1,11 @@
 package product
 
-import "github.com/devlin229/temu-sdk-go/temu"
+import "github.com/devlin229/temu-sdk-go/temu/common"
 
-// GetGoodsListRequest 是获取商品列表的业务请求参数，所有字段均可选。
+// BgGloGoodsListGetRequest 是获取商品列表的业务请求参数，所有字段均可选。
 // 公共鉴权和签名参数由客户端添加。
-type GetGoodsListRequest struct {
-	temu.PageParams
+type BgGloGoodsListGetRequest struct {
+	common.PageParams
 
 	ProductName   string  `json:"productName,omitempty"`   // 商品名称
 	ProductSKCIDs []int64 `json:"productSkcIds,omitempty"` // 商品 SKC ID 列表
@@ -35,16 +35,14 @@ type GetGoodsListRequest struct {
 	Cat10ID int64 `json:"cat10Id,omitempty"` // 十级类目 ID
 }
 
-// GetGoodsListResponse 是商品列表接口的完整响应。
-type GetGoodsListResponse struct {
-	Result       *GetGoodsListResult `json:"result"`
-	Success      bool                `json:"success"`
-	ErrorCode    int64               `json:"errorCode"`
-	ErrorMessage string              `json:"errorMsg"`
+// BgGloGoodsListGetRespose 是商品列表接口的完整响应。
+type BgGloGoodsListGetRespose struct {
+	common.Response
+	Result *BgGloGoodsListGetResult `json:"result"`
 }
 
-// GetGoodsListResult 包含当前页数据与总数量。
-type GetGoodsListResult struct {
+// BgGloGoodsListGetResult 包含当前页数据与总数量。
+type BgGloGoodsListGetResult struct {
 	Data       []GoodsListItem `json:"data"`
 	TotalCount int64           `json:"totalCount"`
 }

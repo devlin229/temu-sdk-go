@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -42,13 +43,22 @@ func NewClient(appKey, appSecret, accessToken string) *Temu {
 
 // request 的 gateway 和 apiType 由各业务方法指定，调用方不需要区分 CN/PA。
 func (t *Temu) request(ctx context.Context, gateway, apiType string, params any) (*Response, error) {
+	var result Response
+	if err := t.requestInto(ctx, gateway, apiType, params, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// requestInto 复用签名与 HTTP 流程，直接解码到各接口的响应类型。
+func (t *Temu) requestInto(ctx context.Context, gateway, apiType string, params, result any) error {
 	raw, err := json.Marshal(params)
 	if err != nil {
-		return nil, fmt.Errorf("编码业务参数: %w", err)
+		return fmt.Errorf("编码业务参数: %w", err)
 	}
 	var body map[string]json.RawMessage
 	if err = json.Unmarshal(raw, &body); err != nil {
-		return nil, fmt.Errorf("业务参数必须是对象: %w", err)
+		return fmt.Errorf("业务参数必须是对象: %w", err)
 	}
 	if body == nil {
 		body = make(map[string]json.RawMessage)
@@ -65,31 +75,35 @@ func (t *Temu) request(ctx context.Context, gateway, apiType string, params any)
 	delete(body, "sign")
 	signature, err := sign(body, t.AppSecret)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	body["sign"], _ = json.Marshal(signature)
 	payload, err := json.Marshal(body)
 	if err != nil {
-		return nil, fmt.Errorf("编码请求参数: %w", err)
+		return fmt.Errorf("编码请求参数: %w", err)
 	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, gateway, bytes.NewReader(payload))
 	if err != nil {
-		return nil, fmt.Errorf("构造请求: %w", err)
+		return fmt.Errorf("构造请求: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	// 按当前调试要求原样输出最终请求，日志中的 payload 就是实际发送的字节。
+	// app_secret 仅用于签名，不在请求参数和日志中输出。
+	if _, err := fmt.Fprintf(os.Stderr, "请求方法: %s\n请求URL: %s\n请求头: %v\n请求参数: %s\n", req.Method, req.URL.String(), req.Header, payload); err != nil {
+		return fmt.Errorf("输出请求日志: %w", err)
+	}
 	resp, err := t.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("调用 %s: %w", apiType, err)
+		return fmt.Errorf("调用 %s: %w", apiType, err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("调用 %s 返回 HTTP %d", apiType, resp.StatusCode)
+		return fmt.Errorf("调用 %s 返回 HTTP %d", apiType, resp.StatusCode)
 	}
-	var result Response
 	decoder := json.NewDecoder(resp.Body)
 	decoder.UseNumber()
-	if err = decoder.Decode(&result); err != nil {
-		return nil, fmt.Errorf("解析 %s 响应: %w", apiType, err)
+	if err = decoder.Decode(result); err != nil {
+		return fmt.Errorf("解析 %s 响应: %w", apiType, err)
 	}
-	return &result, nil
+	return nil
 }

@@ -8,6 +8,13 @@
 /temu-tool
 *.test
 coverage.out
+/image-base64.txt
+/product-request.json
+/product-result.json
+/category-match-result.json
+/parentspec-result.json
+/attrs-get-result.json
+/spec-create-result.json
 
 # 编辑器及系统文件
 .idea/
