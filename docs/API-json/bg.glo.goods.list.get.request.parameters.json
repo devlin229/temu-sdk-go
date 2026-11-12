@@ -1,0 +1,214 @@
+{
+  "api": "bg.glo.goods.list.get",
+  "source_url": "https://agentpartner.temu.com/document?cataId=875198836203&docId=924479235154",
+  "source_updated_at": "2026-06-29 22:05:15",
+  "exported_at": "2026-11-12",
+  "gateway": "https://openapi-b-partner.temu.com/openapi/router",
+  "notes": [
+    "参数定义文件不是请求体。children 保留官方嵌套层级；$item 表示数组元素。",
+    "required 是官方字段级标记；可选对象内的必填字段仅在对象使用时适用。",
+    "官方响应表没有必填列，响应定义不推断 required。",
+    "version 必填列与说明冲突：表中标是，文字说明无要求不传。模板省略 version。",
+    "请求与响应模板使用空字符串、0、false 和单元素数组展示类型及结构，不是合法业务数据或真实响应。"
+  ],
+  "common_parameters": [
+    {
+      "name": "type",
+      "type": "STRING",
+      "description": "API接口名, 形如:bg.*",
+      "required": true
+    },
+    {
+      "name": "app_key",
+      "type": "STRING",
+      "description": "已创建成功的应用标志",
+      "required": true
+    },
+    {
+      "name": "timestamp",
+      "type": "STRING",
+      "description": "时间戳，格式为UNIX时间（秒） ，长度10位，当前时间-300秒<=入参时间<=当前时间+300秒",
+      "required": true
+    },
+    {
+      "name": "sign",
+      "type": "STRING",
+      "description": "API入参参数签名，签名值根据如下算法给出计算过程",
+      "required": true
+    },
+    {
+      "name": "data_type",
+      "type": "STRING",
+      "description": "请求返回的数据格式，可选参数固定为JSON",
+      "required": false
+    },
+    {
+      "name": "access_token",
+      "type": "STRING",
+      "description": "用户授权令牌access_token，卖家中心—授权管理，申请授权生成",
+      "required": true
+    },
+    {
+      "name": "version",
+      "type": "STRING",
+      "description": "API版本，默认为V1，无要求不传此参数",
+      "required": true
+    }
+  ],
+  "business_parameters": [
+    {
+      "name": "pageSize",
+      "type": "INTEGER",
+      "description": "Page Size",
+      "required": false
+    },
+    {
+      "name": "productName",
+      "type": "STRING",
+      "description": "Product Name",
+      "required": false
+    },
+    {
+      "name": "skcTopStatus",
+      "type": "INTEGER",
+      "description": "SKC First-Level Status，0: 未发布到站点，100: 在售中，200:已下架/已终止, 300：已删除",
+      "required": false
+    },
+    {
+      "name": "isSupportPersonalization",
+      "type": "BOOLEAN",
+      "description": "Whether to Support Customized Products",
+      "required": false
+    },
+    {
+      "name": "productSkcIds",
+      "type": "LIST",
+      "description": "Product SKC ID List",
+      "required": false,
+      "children": [
+        {
+          "name": "$item",
+          "type": "INTEGER",
+          "description": "-",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "matchJitMode",
+      "type": "BOOLEAN",
+      "description": "Whether to hit JIT mode",
+      "required": false
+    },
+    {
+      "name": "bindSiteIds",
+      "type": "LIST",
+      "description": "Operational Site ID List",
+      "required": false,
+      "children": [
+        {
+          "name": "$item",
+          "type": "INTEGER",
+          "description": "-",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "createdAtEnd",
+      "type": "INTEGER",
+      "description": "Creation Time End",
+      "required": false
+    },
+    {
+      "name": "cat7Id",
+      "type": "INTEGER",
+      "description": "Seventh-Level Category ID",
+      "required": false
+    },
+    {
+      "name": "createdAtStart",
+      "type": "INTEGER",
+      "description": "Creation Time Start",
+      "required": false
+    },
+    {
+      "name": "cat8Id",
+      "type": "INTEGER",
+      "description": "8th Level Category ID",
+      "required": false
+    },
+    {
+      "name": "skcExtCode",
+      "type": "STRING",
+      "description": "Product SKC External Code",
+      "required": false
+    },
+    {
+      "name": "cat9Id",
+      "type": "INTEGER",
+      "description": "9th Level Category ID",
+      "required": false
+    },
+    {
+      "name": "cat3Id",
+      "type": "INTEGER",
+      "description": "Third-Level Category ID",
+      "required": false
+    },
+    {
+      "name": "cat4Id",
+      "type": "INTEGER",
+      "description": "Fourth-Level Category ID",
+      "required": false
+    },
+    {
+      "name": "cat5Id",
+      "type": "INTEGER",
+      "description": "Fifth-Level Category ID",
+      "required": false
+    },
+    {
+      "name": "cat6Id",
+      "type": "INTEGER",
+      "description": "Sixth-Level Category ID",
+      "required": false
+    },
+    {
+      "name": "cat1Id",
+      "type": "INTEGER",
+      "description": "First-Level Category ID",
+      "required": false
+    },
+    {
+      "name": "cat2Id",
+      "type": "INTEGER",
+      "description": "Secondary Category ID",
+      "required": false
+    },
+    {
+      "name": "quickSellAgtSignStatus",
+      "type": "INTEGER",
+      "description": "Quick Sales Agreement Signing Status 0-Unsigned 1-Signed",
+      "required": false
+    },
+    {
+      "name": "cat10Id",
+      "type": "INTEGER",
+      "description": "Tenth-Level Category ID",
+      "required": false
+    },
+    {
+      "name": "skcSiteStatus",
+      "type": "INTEGER",
+      "description": "SKC Site Status",
+      "required": false
+    },
+    {
+      "name": "page",
+      "type": "INTEGER",
+      "description": "Page Number",
+      "required": false
+    }
+  ]
+}

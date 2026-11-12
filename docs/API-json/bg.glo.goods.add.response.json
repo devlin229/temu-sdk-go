@@ -1,0 +1,28 @@
+{
+  "result": {
+    "productSkuList": [
+      {
+        "productSkuId": 0,
+        "extCode": "",
+        "skuSpecList": [
+          {
+            "specId": 0,
+            "parentSpecName": "",
+            "parentSpecId": 0,
+            "specName": ""
+          }
+        ],
+        "productSkcId": 0
+      }
+    ],
+    "productId": 0,
+    "productSkcList": [
+      {
+        "productSkcId": 0
+      }
+    ]
+  },
+  "success": false,
+  "errorCode": 0,
+  "errorMsg": ""
+}

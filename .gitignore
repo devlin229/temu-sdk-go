@@ -1,0 +1,20 @@
+# 本地凭据
+.env
+.env.*
+!.env.example
+
+# 构建与测试产物
+/bin/
+/temu-tool
+*.test
+coverage.out
+
+# 编辑器及系统文件
+.idea/
+.DS_Store
+
+.codex
+.claude
+scripts
+tests
+examples
