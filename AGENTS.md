@@ -2,7 +2,7 @@
 
 `temu-tool` 是使用 Go 开发的 Temu 接口对接工具，用于辅助商家执行商品管理等日常操作。具体功能以实际接入的 Temu 官方接口和业务需求为准。
 
-当前已实现公共签名与 HTTP 客户端、图片上传、JIT 操作、edit 目录全部 8 个编辑接口，以及 docs/Temu_PA_APIs/category 和 product 中全部 22 个接口的 SDK 方法与明确模型。图片上传已由用户反馈成功；PA 类目及货品接口通过本地契约与模拟测试；用户已反馈单款娃娃商品发布成功，其余接口不因此视为完成真实联调。商品发布方法不自动查询或校验类目模板和商家模式，成功不代表审核通过或可售。
+当前已实现公共签名与 HTTP 客户端、image 目录全部8个图片接口、JIT 操作、edit 目录全部 8 个编辑接口，以及 docs/Temu_PA_APIs/category 和 product 中全部 22 个接口的 SDK 方法与明确模型。图片上传已由用户反馈成功；PA 类目及货品接口通过本地契约与模拟测试；用户已反馈单款娃娃商品发布成功，其余接口不因此视为完成真实联调。商品发布方法不自动查询或校验类目模板和商家模式，成功不代表审核通过或可售。
 
 ## 项目目录
 
@@ -19,7 +19,7 @@ temu-sdk-go/
 │   ├── edit/ # 编辑请求/响应与共享嵌套模型，保留素材 null 和清空语义
 │   ├── jit.go # JIT 操作 SDK 方法
 │   ├── jit/jitmode_activate.go # JIT 操作请求及响应模型
-│   ├── image.go # 图片上传 SDK 方法
+│   ├── image.go # 8个图片处理 SDK 方法
 │   ├── product.go # PA 货品域 11 个 SDK 方法
 │   ├── category.go # PA 类目域 11 个 SDK 方法
 │   ├── category/
@@ -34,7 +34,8 @@ temu-sdk-go/
 │   │   ├── goods_list_get.go # 商品列表请求、响应及嵌套模型
 │   │   └── 其他模型文件 # 品牌、详情、搬运、仓库、招标单、废弃/售罄、运费及生命周期
 │   └── image/
-│       └── goods_image_upload_global.go # 图片上传请求、响应模型
+│       ├── goods_image_upload_global.go # 图片上传请求、响应模型及兼容别名
+│       └── 其他模型文件 # 翻译、识别、色块图、压缩、文字转图和单位转换
 ├── tests/
 │   ├── temu/   # 客户端、图片上传及商品发布模拟测试
 │   └── models/ # 参数字典逐层核对、JSON 编解码及可选值测试
@@ -42,7 +43,7 @@ temu-sdk-go/
 │   ├── category/ # 11 个类目域示例，子目录为完整接口名替换点为下划线
 │   ├── product/  # 11 个货品域示例，保留商品发布数据准备流程
 │   ├── edit/     # 8 个编辑域示例，读取同目录 request.json
-│   ├── image/    # 图片上传示例
+│   ├── image/    # 8个图片接口示例，新增接口读取同目录 request.json
 │   ├── jit/      # JIT 操作示例，凭据统一加载并读取 request.json
 │   ├── config/   # 公共凭据加载：环境变量优先、examples/.env 回退
 │   ├── go.mod    # 独立示例模块，主 SDK 下载时排除整个 examples
@@ -62,6 +63,8 @@ temu-sdk-go/
         ├── pa/category/、pa/product/   # 逐接口的来源、权限、字段、错误码及示例
         ├── Temu_Developer_Guide.md     # 网关、授权、公共参数、签名与通用排错
         ├── Temu_Product_Publish_API.md # 商品发布参数、业务约束、响应与错误码
+        ├── Temu_Image_APIs.md # 8个图片接口清单及非标准响应边界
+        ├── pa/image/ # 新增7个图片接口来源、权限、字段及错误码
         ├── Temu_Image_Upload_API.md    # 图片上传 SDK 使用、错误处理与验证边界
         ├── Temu_Category_Match_API.md  # 用户截图整理的类目搜索契约及验证边界
         ├── Temu_Goods_Attrs_Get_API.md # 类目属性模板查询契约及验证边界
@@ -107,7 +110,7 @@ temu-sdk-go/
 - SDK 方法名由接口 `type` 按点分词转为大驼峰，例如 `bg.goods.image.upload.global` 对应 `BgGoodsImageUploadGlobal`；请求、响应入口结构体统一命名为“方法名 + Request”和“方法名 + Respose”（按约定使用 Respose 拼写）。
 - 嵌套结构体按字段含义命名，例如图片上传的 `Options`、`Result`，不机械追加完整方法名前缀；仅在同包确实有名称冲突时添加必要的业务限定。
 - 可选整数按零值语义选择类型，不因“可选”一律改指针。分页 page/pageSize、正数 ID、时间参数及明确从 1 开始的枚举使用值类型和 omitempty，0 表示未填写；packageType、imageBizType、sizeMode、库存、开关或状态等需明确传 0 的字段使用指针，nil 省略、指向 0 则发送 0。零值含义尚未明确的字段保守保留指针并记录待核实，不推断 0 一定合法。必填整数、响应字段和整数切片元素按契约维护。普通字符串和数组优先用值类型或切片；可选对象、可空响应和清空语义按需使用指针。
-- 各接口响应匿名嵌入 `common.Response`，复用 `Success`、`ErrorCode`、`ErrorMessage`，并单独定义具体类型的 `Result`。公共状态放在 `temu/common/`，避免业务模型与客户端循环依赖；JSON 字段仍平铺在响应根对象。
+- 使用 success/errorCode/errorMsg 协议的接口响应匿名嵌入 `common.Response`，复用 `Success`、`ErrorCode`、`ErrorMessage`，并单独定义具体类型的 `Result`。公共状态放在 `temu/common/`，避免业务模型与客户端循环依赖；JSON 字段仍平铺在响应根对象。
 - 鉴权、签名和公共请求逻辑集中封装；商家业务逻辑与底层 HTTP 调用分开。
 - 共用参数类型统一维护在 `temu/common/params.go`，业务模型直接引用 common 包，不在 temu 根包保留参数类型别名或重复的 params.go。
 - Cookie、Token、App Secret 等凭据通过环境变量或本地配置提供，不硬编码、不提交到仓库、不写入日志；日志中的敏感字段必须脱敏。
@@ -139,3 +142,5 @@ examples 是独立 Go Module（同路径子模块），通过 examples/go.mod �
 JIT 接口模型放 temu/jit/，调用方法放 temu/jit.go。bg.glo.jitmode.activate 当前字典只有必填 productId、productSkcId；result 是未展开 OBJECT。不要根据“开通/关闭”简介猜测开关字段或反转行为，不自动重试。
 
 官方数据字典：temp/ 提供的10份相关字典精简后嵌入 temu/dictionary/data/，只删除重复 source_text，保留 data 与版本/适用性元数据；完整资料归档 docs/data-dictionaries/。发货时效仅归档，不用于全托强制校验；不补造两份未提取的半托字典。Load 不依赖 temp/docs/工作目录或网络，LoadFS 接受调用方维护的完整快照，各实例独立。CheckDictionaries 显式调用且只返回英文建议，不改写商品参数、不自动进入 HTTP 调用；半托请求跳过全托条件检查，车型条件和 Unicode 计数边界保留待核实。省份ID用int64，尺码classId不得替代sizeTemplateId，定制工艺外层键不猜测含义。
+
+图片域：docs/Temu_PA_APIs/image 的8个接口均已接入。cm2in 响应仅code/errMsg/resultUrl，不嵌common.Response，不推断成功码；其nil error仅表示传输/解析成功，调用方需核对业务结果。其余按success判断业务错误。hasSpot和confidence保留string；RGBA与坐标可选整数使用指针保留0。翻译customTaskId为必填int64，taskId为string，isContainDetail必填false不得省略；提交和查询独立，不自动轮询或解释resultCode。压缩数量30仅为建议，不在SDK内静默截断或分批。
