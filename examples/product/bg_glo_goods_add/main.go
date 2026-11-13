@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,6 +16,11 @@ import (
 	"github.com/devlin229/temu-sdk-go/temu/product"
 )
 
+// requestExample 按用户反馈已成功上架的请求维护，作为缺文件时生成本地请求的唯一来源。
+//
+//go:embed request.example.json
+var requestExample []byte
+
 func main() {
 	if err := run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -22,7 +28,7 @@ func main() {
 	}
 }
 
-// 业务字段结构参考同目录 request.example.json；占位值需替换，不能直接发起真实业务。
+// 同目录 request.example.json 来自用户反馈成功上架的单款请求，复用前核对当前商品和店铺参数。
 func run() error {
 	// 凭据统一加载；运行此示例将真实调用商品发布接口。
 	credentials, err := config.LoadCredentials()
@@ -57,27 +63,13 @@ func run() error {
 	return nil
 }
 
-// loadRequest 优先使用用户编辑的请求，仅在文件不存在时生成模板。
+// loadRequest 优先使用本地请求；缺文件时从嵌入的成功案例模板生成，不覆盖已有文件。
 func loadRequest(path string) (*product.BgGloGoodsAddRequest, error) {
 	raw, err := os.ReadFile(path)
-	if errors.Is(err, os.ErrNotExist) {
-		request := makeRequest()
-		raw, err := json.MarshalIndent(request, "", "  ")
-		if err != nil {
-			return nil, fmt.Errorf("编码测试商品: %w", err)
-		}
-		// 只创建新文件，避免覆盖读取后恰好由用户创建的文件。
-		file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
-		if err != nil {
-			return nil, fmt.Errorf("创建测试商品请求: %w", err)
-		}
-		_, writeErr := file.Write(append(raw, '\n'))
-		if err := errors.Join(writeErr, file.Close()); err != nil {
-			return nil, fmt.Errorf("保存测试商品请求: %w", err)
-		}
-		return request, nil
-	}
-	if err != nil {
+	missing := errors.Is(err, os.ErrNotExist)
+	if missing {
+		raw = requestExample
+	} else if err != nil {
 		return nil, fmt.Errorf("读取商品请求: %w", err)
 	}
 	var request *product.BgGloGoodsAddRequest
@@ -93,70 +85,16 @@ func loadRequest(path string) (*product.BgGloGoodsAddRequest, error) {
 	if err := decoder.Decode(&extra); err != io.EOF {
 		return nil, errors.New("商品请求文件只能包含一个 JSON 对象")
 	}
+	if missing {
+		// 使用独占创建，避免覆盖读取后恰好由用户创建的请求文件。
+		file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+		if err != nil {
+			return nil, fmt.Errorf("创建测试商品请求: %w", err)
+		}
+		_, writeErr := file.Write(raw)
+		if err := errors.Join(writeErr, file.Close()); err != nil {
+			return nil, fmt.Errorf("保存测试商品请求: %w", err)
+		}
+	}
 	return request, nil
-}
-
-// 类目路径及颜色父规格取自查询结果；子规格和属性 ID、价格、尺寸重量及产地仍为测试数据。
-// 本例按全托结构使用 supplierPrice；类目是否适合实际商品、金额单位和其他平台规则仍需核验。
-func makeRequest() *product.BgGloGoodsAddRequest {
-	const imageURL = "https://img.kwcdn.com/product/open/51b943f3f6014cf6a2e002c0078421dc-goods.jpeg"
-	const parentSpecID int64 = 1001 // parentspec-result.json：颜色
-	const parentSpecName = "颜色"
-	request := &product.BgGloGoodsAddRequest{
-		ProductName: "测试商品 娃娃 灰蓝上衣款/酒红上衣款 两款可选",
-		ProductI18nReqs: []product.ProductI18nRequest{{
-			Language: "en", ProductName: "Test Doll Listing - Gray-Blue or Burgundy Outfit",
-		}},
-		Cat1ID: 25439, Cat2ID: 25567, Cat3ID: 25589, // 玩具与游戏 → 娃娃及配件 → 娃娃
-		MaterialImgURL: imageURL, CarouselImageURLs: []string{imageURL},
-		ProductPropertyReqs: []product.ProductPropertyRequest{{
-			PID: 40001, TemplatePID: 40002, RefPID: 40003, VID: 40004,
-			PropName: "测试材质", PropValue: "虚构测试材质，非实物参数",
-		}},
-		ProductWhExtAttrReq: &product.ProductWhExtAttrRequest{
-			ProductOrigin: product.ProductOrigin{Region1ShortName: "CN"},
-		},
-	}
-	variants := []struct {
-		code   string
-		name   string
-		specID int64
-		vid    int64
-		price  int64
-		weight int64
-	}{
-		{"GRAY-BLUE", "灰蓝上衣款", 20001, 50011, 1, 180000},
-		{"BURGUNDY", "酒红上衣款", 20002, 50012, 1, 190000},
-	}
-	for _, variant := range variants {
-		request.ProductSpecPropertyReqs = append(request.ProductSpecPropertyReqs, product.ProductSpecPropertyRequest{
-			PID: 50001, TemplatePID: 50002, RefPID: 50003, VID: variant.vid,
-			SpecID: variant.specID, ParentSpecID: parentSpecID,
-			PropName: parentSpecName, PropValue: variant.name,
-		})
-		nonSensitive := int64(0)
-		// 每个颜色款作为一个 SKC，其下一个 SKU；不是两只一起出售的套装。
-		request.ProductSKCReqs = append(request.ProductSKCReqs, product.ProductSKCRequest{
-			ExtCode:        "TEST-DOLL-SKC-" + variant.code,
-			PreviewImgURLs: []string{imageURL},
-			// 按用户本次调试要求：保留一条主销规格对象，四个字段均为默认值。
-			MainProductSKUSpecReqs: []product.MainProductSKUSpecRequest{{}},
-			ProductSKUReqs: []product.ProductSKURequest{{
-				ExtCode:      "TEST-DOLL-SKU-" + variant.code,
-				CurrencyType: "CNY", SupplierPrice: variant.price,
-				ThumbURL: imageURL,
-				ProductSKUSpecReqs: []product.ProductSKUSpecRequest{{
-					SpecID: variant.specID, ParentSpecID: parentSpecID,
-					SpecName: variant.name, ParentSpecName: parentSpecName,
-				}},
-				ProductSKUWhExtAttrReq: product.ProductSKUWhExtAttrRequest{
-					ProductSKUWeightReq:         product.ProductSKUWeightRequest{Value: variant.weight},
-					ProductSKUVolumeReq:         product.ProductSKUVolumeRequest{Len: 200, Width: 120, Height: 100},
-					ProductSKUSensitiveLimitReq: product.ProductSKUSensitiveLimitRequest{},
-					ProductSKUSensitiveAttrReq:  product.ProductSKUSensitiveAttrRequest{IsSensitive: &nonSensitive},
-				},
-			}},
-		})
-	}
-	return request
 }

@@ -5,7 +5,7 @@
 | 接口 | SDK 方法 | 当前状态 |
 | --- | --- | --- |
 | 图片上传 bg.goods.image.upload.global | BgGoodsImageUploadGlobal | 已实现；用户已反馈上传成功，自动化测试使用模拟网关 |
-| 商品发布 bg.glo.goods.add | BgGloGoodsAdd | 已实现并通过模拟测试，尚未真实发品联调 |
+| 商品发布 bg.glo.goods.add | BgGloGoodsAdd | 用户反馈单款娃娃请求已成功上架；自动化测试仍使用模拟网关 |
 | 类目搜索 bg.glo.goods.category.match | BgGloGoodsCategoryMatch | 按 PA 字典核对并通过模拟测试，尚未真实查询验证 |
 | 父规格查询 bg.glo.goods.parentspec.get | BgGloGoodsParentspecGet | 无业务请求参数，已通过模拟测试，尚未真实查询验证 |
 | 类目属性查询 bg.glo.goods.attrs.get | BgGloGoodsAttrsGet | 已通过参数字典和模拟测试，尚未真实查询验证 |
@@ -108,3 +108,14 @@ go build ./...
 测试集中位于 tests/，默认使用模拟 HTTP Transport，不读取示例中的凭据，不调用真实商家接口。
 
 旧 SDK 已统一来源注释、结果类型名称和文件名；原有 `category.Result`、`image.Result`、`product.Result`、`product.BgGloGoodsListGetResult` 保留为类型别名。商品列表的可选 ID 数组统一采用 omitzero：nil 省略，显式空切片发送 []。
+
+请求中的可选整数按零值含义选择类型：分页、正数 ID、时间参数和明确从 1 开始的枚举使用值类型，0 时省略；需要明确传 0 或零值含义尚未明确的字段保留指针。例如：
+
+```go
+packageType := int64(0)
+request := product.ProductOuterPackageRequest{
+    PackageType: &packageType, // 发送 packageType: 0；保持 nil 则省略
+}
+```
+
+对于保留指针的可选字段，Go 调用方需传变量地址；page、pageSize 等值类型字段仍直接赋整数。JSON 文件无需手动取地址，解码器会将显式 0 解析为非 nil 指针。必填整数和响应字段保持原有含义，SDK 不判断 0 是否为平台允许值。

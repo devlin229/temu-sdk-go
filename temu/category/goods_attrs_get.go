@@ -8,7 +8,7 @@ import "github.com/devlin229/temu-sdk-go/temu/common"
 type BgGloGoodsAttrsGetRequest struct {
 	CatID             int64    `json:"catId"`                       // 必填；叶子类目 ID
 	ProductCreateTime int64    `json:"productCreateTime,omitempty"` // 可选；商品创建时间，毫秒时间戳
-	SupportedType     int64    `json:"supportedType,omitempty"`     // 可选；渠道类型，传入时优先于 mallId；枚举及默认值未明确
+	SupportedType     *int64   `json:"supportedType,omitempty"`     // 可选；渠道类型，传入时优先于 mallId；枚举及默认值未明确
 	LangList          []string `json:"langList,omitzero"`           // 可选；多语言查询影响性能，一般不传；nil 省略，空切片发送 []
 }
 

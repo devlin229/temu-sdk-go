@@ -75,9 +75,9 @@ cp -n examples/.env.example examples/.env
 
 ## 可分享的请求模板
 
-21 个含业务参数的接口各提供 request.example.json，内容来自本地 PA 字段结构，不含公共鉴权字段或真实商家数据。父规格列表、爆款售罄查询没有业务参数，不创建空请求模板。
+21 个含业务参数的接口各提供 request.example.json。商品发布模板按用户授权复制其成功上架的单款请求；其余模板来自本地 PA 字段结构。全部模板不含公共鉴权凭据。父规格列表、爆款售罄查询没有业务参数，不创建空请求模板。
 
-模板中的空字符串、0、false 和单元素数组只是类型占位，并非合法业务值或默认值。复制后按真实业务填写必填和条件必填项，删去不使用的可选字段；模板本身不自动发送。
+除商品发布成功案例外，其他模板中的空字符串、0、false 和单元素数组只是类型占位，并非合法业务值或默认值。复制后按真实业务填写必填和条件必填项，删去不使用的可选字段；模板本身不自动发送。
 
 商品发布示例读取 product-request.json。首次准备可以在项目根目录执行：
 
@@ -85,7 +85,7 @@ cp -n examples/.env.example examples/.env
 cp -n examples/product/bg_glo_goods_add/request.example.json examples/product/bg_glo_goods_add/product-request.json
 ```
 
-如果本地文件已经存在，保留已有文件，避免覆盖。编辑 product-request.json 后再运行示例；原有缺文件时生成测试数据的行为保留。
+如果本地文件已经存在，保留已有文件，避免覆盖。编辑 product-request.json 后再运行示例；缺文件时从嵌入的 request.example.json 生成，和可分享模板使用同一份数据，不再生成旧的虚构双款参数。
 
 原来内嵌 requestJSON 的 16 个 PA 示例已统一调用 config.LoadRequest()，读取接口目录中的 request.json，不再修改源码里的 JSON 字符串。先复制同目录的 request.example.json 为 request.json，填好业务参数、删去不需要的可选字段后运行；全可选接口可以将本地文件改成 {}。缺文件、JSON 格式错误或字段不匹配时直接报错，不自动创建、不覆盖、不回退到占位模板。原有类目搜索、属性查询和规格创建示例仍按 main.go 中明确的结构体字段取参。图片上传继续按 imagePath 读取图片并编码，商品发布继续读取 product-request.json。
 
@@ -96,7 +96,7 @@ Git 规则为：
 !/examples/**/request.example.json
 ```
 
-因此别人检出仓库能获得模板；本地请求、响应及调试 JSON 仍保持忽略。模板中不得添加 Token、App Secret、真实签名、真实商家参数或其他本地配置。
+因此别人检出仓库能获得模板；本地请求、响应及调试 JSON 仍保持忽略。模板中不得添加 Token、App Secret、真实签名或本地配置。商品发布案例按本次用户授权保留业务 ID 和图片；复用前仍应核对自己的店铺、类目、规格、图片与商品信息。
 
 例如包装清单查询，从项目根目录执行：
 

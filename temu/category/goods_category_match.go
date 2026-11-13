@@ -7,7 +7,7 @@ import "github.com/devlin229/temu-sdk-go/temu/common"
 // BgGloGoodsCategoryMatchRequest 是 bg.glo.goods.category.match 的业务请求。
 type BgGloGoodsCategoryMatchRequest struct {
 	SearchText string `json:"searchText,omitempty"` // 可选；搜索文本，文档最大长度 200
-	SiteID     int64  `json:"siteId,omitempty"`     // 可选；站点 ID，零值省略
+	SiteID     int64  `json:"siteId,omitempty"`     // 可选；正数站点 ID，0 时省略
 }
 
 // BgGloGoodsCategoryMatchRespose 是类目搜索的完整响应。

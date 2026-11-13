@@ -9,7 +9,7 @@ import "github.com/devlin229/temu-sdk-go/temu/common"
 // GoodsMigrateProductSemiManagedRequest Product Semi Managed Request
 type GoodsMigrateProductSemiManagedRequest struct {
 	BindSiteIDs         []int64 `json:"bindSiteIds"`                   // 必填；Bound Site List
-	SemiManagedSiteMode int64   `json:"semiManagedSiteMode,omitempty"` // 可选；Semi-managed Site Sales Mode
+	SemiManagedSiteMode *int64  `json:"semiManagedSiteMode,omitempty"` // 可选；Semi-managed Site Sales Mode
 }
 
 // TargetRoute 对应接口中的嵌套对象。

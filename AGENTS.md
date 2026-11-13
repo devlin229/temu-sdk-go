@@ -2,7 +2,7 @@
 
 `temu-tool` 是使用 Go 开发的 Temu 接口对接工具，用于辅助商家执行商品管理等日常操作。具体功能以实际接入的 Temu 官方接口和业务需求为准。
 
-当前已实现公共签名与 HTTP 客户端、图片上传，以及 docs/Temu_PA_APIs/category 和 product 中全部 22 个接口的 SDK 方法与明确模型。图片上传已由用户反馈成功；PA 类目及货品接口通过本地契约与模拟测试，尚未完成这批接口的真实商家联调。商品发布方法不自动查询或校验类目模板和商家模式，成功不代表审核通过或可售。
+当前已实现公共签名与 HTTP 客户端、图片上传，以及 docs/Temu_PA_APIs/category 和 product 中全部 22 个接口的 SDK 方法与明确模型。图片上传已由用户反馈成功；PA 类目及货品接口通过本地契约与模拟测试；用户已反馈单款娃娃商品发布成功，其余接口不因此视为完成真实联调。商品发布方法不自动查询或校验类目模板和商家模式，成功不代表审核通过或可售。
 
 ## 项目目录
 
@@ -89,12 +89,12 @@ temu-sdk-go/
 - 请求与响应优先使用明确的结构体及 `json` 标签；字段类型、必填条件和签名规则以官方文档为准，不猜测接口契约。
 - SDK 方法名由接口 `type` 按点分词转为大驼峰，例如 `bg.goods.image.upload.global` 对应 `BgGoodsImageUploadGlobal`；请求、响应入口结构体统一命名为“方法名 + Request”和“方法名 + Respose”（按约定使用 Respose 拼写）。
 - 嵌套结构体按字段含义命名，例如图片上传的 `Options`、`Result`，不机械追加完整方法名前缀；仅在同包确实有名称冲突时添加必要的业务限定。
-- 非必要不使用指针：普通字符串、数值和数组优先用值类型或切片；只为可选对象、可空响应、有清空语义的数组，以及必须区分未设置和零值的字段保留指针。图片上传基础字段使用值类型，imageBizType、选项开关和 sizeMode 不加 omitempty，保留有效的 0/false。
+- 可选整数按零值语义选择类型，不因“可选”一律改指针。分页 page/pageSize、正数 ID、时间参数及明确从 1 开始的枚举使用值类型和 omitempty，0 表示未填写；packageType、imageBizType、sizeMode、库存、开关或状态等需明确传 0 的字段使用指针，nil 省略、指向 0 则发送 0。零值含义尚未明确的字段保守保留指针并记录待核实，不推断 0 一定合法。必填整数、响应字段和整数切片元素按契约维护。普通字符串和数组优先用值类型或切片；可选对象、可空响应和清空语义按需使用指针。
 - 各接口响应匿名嵌入 `common.Response`，复用 `Success`、`ErrorCode`、`ErrorMessage`，并单独定义具体类型的 `Result`。公共状态放在 `temu/common/`，避免业务模型与客户端循环依赖；JSON 字段仍平铺在响应根对象。
 - 鉴权、签名和公共请求逻辑集中封装；商家业务逻辑与底层 HTTP 调用分开。
 - 共用参数类型统一维护在 `temu/common/params.go`，业务模型直接引用 common 包，不在 temu 根包保留参数类型别名或重复的 params.go。
 - Cookie、Token、App Secret 等凭据通过环境变量或本地配置提供，不硬编码、不提交到仓库、不写入日志；日志中的敏感字段必须脱敏。
-- 示例凭据统一调用 `examples/config.LoadCredentials()`：优先读取 `TEMU_APP_KEY`、`TEMU_APP_SECRET`、`TEMU_ACCESS_TOKEN` 系统环境变量，缺失字段从 `examples/.env` 补齐，仍缺失则报错。不得在各示例硬编码或重复读取凭据；`.env` 不提交，`.env.example` 只保留空占位。`examples/product/bg_glo_goods_add/` 的两款娃娃业务参数按用户授权使用虚构测试值，不将这些值描述为真实类目、规格或已核实的商品参数。
+- 示例凭据统一调用 `examples/config.LoadCredentials()`：优先读取 `TEMU_APP_KEY`、`TEMU_APP_SECRET`、`TEMU_ACCESS_TOKEN` 系统环境变量，缺失字段从 `examples/.env` 补齐，仍缺失则报错。不得在各示例硬编码或重复读取凭据；`.env` 不提交，`.env.example` 只保留空占位。`examples/product/bg_glo_goods_add/` 的商品发布模板按用户授权复制成功上架的单款 product-request.json，缺文件时由嵌入的 request.example.json 生成。该成功案例只代表用户反馈的特定店铺与参数，不推断为任意商家通用有效。
 - 按用户明确要求，当前命令行调试例外：发送前将请求方法、URL、请求头和已签名请求参数原样输出到 stderr，不脱敏（含 access_token、app_key、sign 及图片签名链接）。app_secret 不属于请求参数，仍不输出；结果 JSON 独立输出到 stdout。
 - 对新增、修改、删除商品等写入操作，不进行未经文档确认可安全重试的自动重试，避免重复执行。
 - 为签名、参数转换和错误处理等关键逻辑编写测试；测试优先使用模拟服务，避免默认调用真实商家接口。
@@ -113,3 +113,5 @@ temu-sdk-go/
 可分享的业务请求模板统一命名为 request.example.json，允许通过 .gitignore 白名单提交。模板仅含业务字段和结构占位值，不含公共凭据或真实商家数据；没有业务参数的接口不创建空模板。模板不自动参与真实调用，说明中须按示例实际取参方式指导填写；本地请求和结果 JSON 继续忽略，不覆盖已有请求。
 
 使用 JSON 文件作为业务参数的调用示例统一通过 examples/config.LoadRequest() 读取接口目录中的 request.json，不内嵌 requestJSON 字符串或添加恒定空字符串判断。缺文件时提示复制同目录 request.example.json 并填写，不能自动使用占位模板发起请求，不覆盖本地参数。公共读取器严格接受一个 JSON 对象并拒绝未知字段。商品发布原有 product-request.json 和特殊数据准备流程保持明确记录。
+
+商品发布 request.example.json 按用户明确授权与其成功上架的 product-request.json 同步，属于业务案例模板例外（仍不含公共鉴权凭据）；其他接口模板继续使用结构占位值。发品缺本地文件时从该模板生成，不再维护重复的虚构双款 makeRequest 数据。

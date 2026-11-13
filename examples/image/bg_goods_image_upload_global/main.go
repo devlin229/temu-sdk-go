@@ -38,7 +38,7 @@ func run() error {
 	// 按接口示例使用 Data URL；根据文件内容识别类型，避免把 JPEG 标成 PNG。
 	encoded := "data:" + http.DetectContentType(content) + ";base64," + base64.StdEncoding.EncodeToString(content)
 	request := &image.BgGoodsImageUploadGlobalRequest{Image: encoded}
-	// 外包装图片可设置 ImageBizType = bizType，其中 bizType := int64(1)。
+	// 外包装图片可设置 ImageBizType = &bizType，其中 bizType := int64(1)。
 	// 图片处理选项按需设置 request.Options = &image.Options{...}。
 
 	client := temu.NewClient(credentials.AppKey, credentials.AppSecret, credentials.AccessToken)

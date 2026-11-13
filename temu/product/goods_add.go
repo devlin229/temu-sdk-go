@@ -5,7 +5,7 @@ package product
 import "github.com/devlin229/temu-sdk-go/temu/common"
 
 // 请求只含业务参数；公共鉴权和签名参数由客户端添加。
-// 普通字段使用值类型；可选对象及有明确零值、null 或清空语义的字段按需保留指针。
+// 正数参数使用值类型；需区分显式 0 的可选整数与可选对象使用指针。
 // 可选切片使用 omitzero：nil 省略，非 nil 空切片发送 []。
 // 必填标记仅表示字段定义；条件必填及业务有效性仍须按商家模式、类目和站点核对。
 
@@ -17,7 +17,7 @@ type BgGloGoodsAddRequest struct {
 	CopyFromProductID             int64                              `json:"copyFromProductId,omitempty"`             // 可选；Replicated Source Product ID
 	ProductName                   string                             `json:"productName"`                             // 必填；Product Name
 	ProductI18nReqs               []ProductI18nRequest               `json:"productI18nReqs,omitzero"`                // 可选；Product Multilingual Information Request
-	SellOutProductIDSrc           int64                              `json:"sellOutProductIdSrc,omitempty"`           // 可选；Sold Out Product ID Src
+	SellOutProductIDSrc           *int64                             `json:"sellOutProductIdSrc,omitempty"`           // 可选；Sold Out Product ID Src
 	ProductShipmentReq            *ProductShipmentRequest            `json:"productShipmentReq,omitempty"`            // 可选；Product Delivery Information Request
 	Cat8ID                        int64                              `json:"cat8Id"`                                  // 必填；Eight-level Category ID, pass 0 if none
 	Cat4ID                        int64                              `json:"cat4Id"`                                  // 必填；Fourth-Level Category ID, pass 0 if none
@@ -58,9 +58,9 @@ type BgGloGoodsAddRequest struct {
 
 // ProductSemiManagedRequest Semi-managed Merchant Information
 type ProductSemiManagedRequest struct {
-	SemiLanguageStrategy int64   `json:"semiLanguageStrategy,omitempty"` // 可选；Semi-Managed - Material Language Strategy
+	SemiLanguageStrategy *int64  `json:"semiLanguageStrategy,omitempty"` // 可选；Semi-Managed - Material Language Strategy
 	BindSiteIDs          []int64 `json:"bindSiteIds"`                    // 必填；Bound Site List
-	SemiManagedSiteMode  int64   `json:"semiManagedSiteMode,omitempty"`  // 可选；Semi-managed Site Sales Mode
+	SemiManagedSiteMode  *int64  `json:"semiManagedSiteMode,omitempty"`  // 可选；Semi-managed Site Sales Mode
 }
 
 // ProductOuterPackageImageRequest 对应 bg.glo.goods.add.productOuterPackageImageReqs[] 的对象字段。
@@ -148,7 +148,7 @@ type Content struct {
 // TextModuleDetails Text Module Details
 type TextModuleDetails struct {
 	BackgroundColor string `json:"backgroundColor"`      // 必填；Background Color
-	FontFamily      int64  `json:"fontFamily,omitempty"` // 可选；Font Type
+	FontFamily      *int64 `json:"fontFamily,omitempty"` // 可选；Font Type
 	FontSize        int64  `json:"fontSize"`             // 必填；Text Module Font Size
 	Align           string `json:"align"`                // 必填；Text Alignment, left--Left Aligned；right--Right Aligned；center--Centered；justify--Justified
 	FontColor       string `json:"fontColor"`            // 必填；Text Color
@@ -211,8 +211,8 @@ type GoodsModelRequest struct {
 
 // ProductOuterPackageRequest Product Outer Packaging Information
 type ProductOuterPackageRequest struct {
-	PackageShape int64 `json:"packageShape,omitempty"` // 可选；Outer Packaging Shape
-	PackageType  int64 `json:"packageType,omitempty"`  // 可选；Outer Packaging Type
+	PackageShape *int64 `json:"packageShape,omitempty"` // 可选；Outer Packaging Shape
+	PackageType  *int64 `json:"packageType,omitempty"`  // 可选；Outer Packaging Type
 }
 
 // SensitiveTransNormalFileRequest 对应 bg.glo.goods.add.sensitiveTransNormalFileReqs[] 的对象字段。
@@ -262,7 +262,7 @@ type ProductSKCRequest struct {
 	MainProductSKUSpecReqs          []MainProductSKUSpecRequest          `json:"mainProductSkuSpecReqs"`                   // 必填；Main Sales Specification List
 	PreviewImgURLs                  []string                             `json:"previewImgUrls"`                           // 必填；List of Preview Images, not required for non-apparel categories
 	ProductSKCCarouselImageI18nReqs []ProductSKCCarouselImageI18nRequest `json:"productSkcCarouselImageI18nReqs,omitzero"` // 可选；SKC Carousel Multi-Language Information Request
-	IsBasePlate                     int64                                `json:"isBasePlate,omitempty"`                    // 可选；Whether Baseplate
+	IsBasePlate                     *int64                               `json:"isBasePlate,omitempty"`                    // 可选；Whether Baseplate
 	ColorImageURL                   string                               `json:"colorImageUrl,omitempty"`                  // 可选；SKC Color Block Diagram
 }
 
@@ -272,7 +272,7 @@ type ProductSKURequest struct {
 	ProductSKUMultiPackReq        *ProductSKUMultiPackRequest        `json:"productSkuMultiPackReq,omitempty"`        // 可选；Product Multi-Package Request
 	ProductSKUSuggestedPriceReq   *ProductSKUSuggestedPriceRequest   `json:"productSkuSuggestedPriceReq,omitempty"`   // 可选；Product SKU Suggested Price Request
 	SiteSupplierPrices            []SiteSupplierPrice                `json:"siteSupplierPrices,omitzero"`             // 可选；Site Supply Price List, for semi_managed merchant scenario only
-	SupplierPrice                 int64                              `json:"supplierPrice,omitempty"`                 // 可选；Supply Price, deprecated in semi_managed merchant scenario
+	SupplierPrice                 *int64                             `json:"supplierPrice,omitempty"`                 // 可选；Supply Price, deprecated in semi_managed merchant scenario
 	ProductSKUUSSuggestedPriceReq *ProductSKUUSSuggestedPriceRequest `json:"productSkuUsSuggestedPriceReq,omitempty"` // 可选；Product SKU US Suggested Price Request
 	ProductSKUStockQuantityReq    *ProductSKUStockQuantityRequest    `json:"productSkuStockQuantityReq,omitempty"`    // 可选；Product SKU Inventory Request
 	ExtCode                       string                             `json:"extCode"`                                 // 必填；Product SKC External Code, pass empty string if not available
@@ -286,7 +286,7 @@ type ProductSKURequest struct {
 // ProductSKUMultiPackRequest Product Multi-Package Request
 type ProductSKUMultiPackRequest struct {
 	NumberOfPieces          int64                        `json:"numberOfPieces,omitempty"`          // 可选；Quantity, default is 1 for single item
-	IndividuallyPacked      int64                        `json:"individuallyPacked,omitempty"`      // 可选；Whether to use independent packaging (pass -1 to clear)
+	IndividuallyPacked      *int64                       `json:"individuallyPacked,omitempty"`      // 可选；Whether to use independent packaging (pass -1 to clear)
 	ProductSKUNetContentReq *ProductSKUNetContentRequest `json:"productSkuNetContentReq,omitempty"` // 可选；Net Content Request, passing an empty object indicates clearing
 	MixedType               int64                        `json:"mixedType,omitempty"`               // 可选；Mixed set type, 1: different products, 2: same product with different specifications
 	TotalNetContent         *TotalNetContent             `json:"totalNetContent,omitempty"`         // 可选；Total Net Content
@@ -298,20 +298,20 @@ type ProductSKUMultiPackRequest struct {
 
 // ProductSKUNetContentRequest Net Content Request, passing an empty object indicates clearing
 type ProductSKUNetContentRequest struct {
-	NetContentUnitCode int64 `json:"netContentUnitCode,omitempty"` // 可选；Net Content Unit, 1: Fluid Ounce, 2: Milliliter, 3: Gallon, 4: Liter, 5: Gram, 6: Kilogram, 7: Troy Ounce, 8: Pound
-	NetContentNumber   int64 `json:"netContentNumber,omitempty"`   // 可选；Net Content Value, the target value needs to be multiplied by 1000 before passing the value. For example, if you are passing "1 L", you need to pass "1000" in "netContentNumber".
+	NetContentUnitCode int64  `json:"netContentUnitCode,omitempty"` // 可选；Net Content Unit, 1: Fluid Ounce, 2: Milliliter, 3: Gallon, 4: Liter, 5: Gram, 6: Kilogram, 7: Troy Ounce, 8: Pound
+	NetContentNumber   *int64 `json:"netContentNumber,omitempty"`   // 可选；Net Content Value, the target value needs to be multiplied by 1000 before passing the value. For example, if you are passing "1 L", you need to pass "1000" in "netContentNumber".
 }
 
 // TotalNetContent Total Net Content
 type TotalNetContent struct {
-	NetContentUnitCode int64 `json:"netContentUnitCode,omitempty"` // 可选；Net Content Unit, 1: Fluid Ounce, 2: Milliliter, 3: Gallon, 4: Liter, 5: Gram, 6: Kilogram, 7: Troy Ounce, 8: Pound
-	NetContentNumber   int64 `json:"netContentNumber,omitempty"`   // 可选；Net Content Value, the target value needs to be multiplied by 1000 before passing the value. For example, if you are passing "1 L", you need to pass "1000" in "netContentNumber".
+	NetContentUnitCode int64  `json:"netContentUnitCode,omitempty"` // 可选；Net Content Unit, 1: Fluid Ounce, 2: Milliliter, 3: Gallon, 4: Liter, 5: Gram, 6: Kilogram, 7: Troy Ounce, 8: Pound
+	NetContentNumber   *int64 `json:"netContentNumber,omitempty"`   // 可选；Net Content Value, the target value needs to be multiplied by 1000 before passing the value. For example, if you are passing "1 L", you need to pass "1000" in "netContentNumber".
 }
 
 // ProductSKUSuggestedPriceRequest Product SKU Suggested Price Request
 type ProductSKUSuggestedPriceRequest struct {
 	SuggestedPriceCurrencyType string `json:"suggestedPriceCurrencyType,omitempty"` // 可选；Recommended Price Currency
-	SuggestedPrice             int64  `json:"suggestedPrice,omitempty"`             // 可选；Suggested Price
+	SuggestedPrice             *int64 `json:"suggestedPrice,omitempty"`             // 可选；Suggested Price
 	SpecialSuggestedPrice      string `json:"specialSuggestedPrice,omitempty"`      // 可选；Special Suggested Price
 }
 
@@ -324,7 +324,7 @@ type SiteSupplierPrice struct {
 // ProductSKUUSSuggestedPriceRequest Product SKU US Suggested Price Request
 type ProductSKUUSSuggestedPriceRequest struct {
 	SuggestedPriceCurrencyType string `json:"suggestedPriceCurrencyType,omitempty"` // 可选；Recommended Price Currency
-	SuggestedPrice             int64  `json:"suggestedPrice,omitempty"`             // 可选；Suggested Price
+	SuggestedPrice             *int64 `json:"suggestedPrice,omitempty"`             // 可选；Suggested Price
 	SpecialSuggestedPrice      string `json:"specialSuggestedPrice,omitempty"`      // 可选；Special Suggested Price
 }
 
@@ -383,12 +383,12 @@ type ProductSKUSameReferPriceRequest struct {
 
 // ProductSKUSensitiveLimitRequest Product SKU Sensitive Attribute Restriction Request
 type ProductSKUSensitiveLimitRequest struct {
-	MaxBatteryCapacityHp int64          `json:"maxBatteryCapacityHp,omitempty"` // 可选；Maximum Battery Capacity (mWh)
-	MaxBatteryCapacity   int64          `json:"maxBatteryCapacity,omitempty"`   // 可选；Maximum Battery Capacity (Wh) (Prioritizes maxBatteryCapacityHp)
-	MaxLiquidCapacity    int64          `json:"maxLiquidCapacity,omitempty"`    // 可选；Maximum Liquid Capacity (mL) (Prefer using maxLiquidCapacityHp)
-	MaxLiquidCapacityHp  int64          `json:"maxLiquidCapacityHp,omitempty"`  // 可选；Maximum Liquid Capacity (μL)
-	MaxKnifeLength       int64          `json:"maxKnifeLength,omitempty"`       // 可选；Maximum Tool Length (mm) (Prefer using maxKnifeLengthHp)
-	MaxKnifeLengthHp     int64          `json:"maxKnifeLengthHp,omitempty"`     // 可选；Maximum Tool Length (μm)
+	MaxBatteryCapacityHp *int64         `json:"maxBatteryCapacityHp,omitempty"` // 可选；Maximum Battery Capacity (mWh)
+	MaxBatteryCapacity   *int64         `json:"maxBatteryCapacity,omitempty"`   // 可选；Maximum Battery Capacity (Wh) (Prioritizes maxBatteryCapacityHp)
+	MaxLiquidCapacity    *int64         `json:"maxLiquidCapacity,omitempty"`    // 可选；Maximum Liquid Capacity (mL) (Prefer using maxLiquidCapacityHp)
+	MaxLiquidCapacityHp  *int64         `json:"maxLiquidCapacityHp,omitempty"`  // 可选；Maximum Liquid Capacity (μL)
+	MaxKnifeLength       *int64         `json:"maxKnifeLength,omitempty"`       // 可选；Maximum Tool Length (mm) (Prefer using maxKnifeLengthHp)
+	MaxKnifeLengthHp     *int64         `json:"maxKnifeLengthHp,omitempty"`     // 可选；Maximum Tool Length (μm)
 	KnifeTipAngle        *KnifeTipAngle `json:"knifeTipAngle,omitempty"`        // 可选；Blade Angle
 }
 
@@ -412,7 +412,7 @@ type ProductSKUVolumeRequest struct {
 type ProductSKUNetWeightRequest struct {
 	InputUnit  string `json:"inputUnit,omitempty"`  // 可选；Input Net Weight Unit
 	InputValue string `json:"inputValue,omitempty"` // 可选；Input Net Weight Value
-	Value      int64  `json:"value,omitempty"`      // 可选；Net Weight Value, unit mg
+	Value      *int64 `json:"value,omitempty"`      // 可选；Net Weight Value, unit mg
 }
 
 // ProductSKUBarCodeRequest 对应 bg.glo.goods.add.productSkcReqs[].productSkuReqs[].productSkuWhExtAttrReq.productSkuBarCodeReqs[] 的对象字段。
@@ -452,7 +452,7 @@ type ProductSKCCarouselImageI18nRequest struct {
 
 // ProductSaleExtAttrRequest Product Sales Side Extended Attribute Request
 type ProductSaleExtAttrRequest struct {
-	InventoryRegion         int64                        `json:"inventoryRegion,omitempty"`         // 可选；Inventory Area
+	InventoryRegion         *int64                       `json:"inventoryRegion,omitempty"`         // 可选；Inventory Area
 	ProductSecondHandReq    *ProductSecondHandRequest    `json:"productSecondHandReq,omitempty"`    // 可选；Second-hand Goods Information
 	DiscreetShipping        *bool                        `json:"discreetShipping,omitempty"`        // 可选；This parameter is required for adult products (category ID: 16571). Setting this service will display the corresponding logo on the consumer order page, which can improve payment conversion rates. Merchants cannot display the details of the purchased items on the shipping packaging. If a consumer complains about failure to maintain confidentiality and the complaint is verified, the merchant may be held liable for after-sales service.
 	CustomizedTechnologyReq *CustomizedTechnologyRequest `json:"customizedTechnologyReq,omitempty"` // 可选；Customized Craft Request
@@ -463,8 +463,8 @@ type ProductSaleExtAttrRequest struct {
 
 // ProductSecondHandRequest Second-hand Goods Information
 type ProductSecondHandRequest struct {
-	IsSecondHand    *bool `json:"isSecondHand,omitempty"`    // 可选；Whether Second-hand
-	SecondHandLevel int64 `json:"secondHandLevel,omitempty"` // 可选；Second-hand Grade (Condition)
+	IsSecondHand    *bool  `json:"isSecondHand,omitempty"`    // 可选；Whether Second-hand
+	SecondHandLevel *int64 `json:"secondHandLevel,omitempty"` // 可选；Second-hand Grade (Condition)
 }
 
 // CustomizedTechnologyRequest Customized Craft Request

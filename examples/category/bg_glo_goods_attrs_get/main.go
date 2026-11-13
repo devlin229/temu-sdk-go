@@ -29,7 +29,7 @@ func run() error {
 	}
 	catID := int64(25589)
 	productCreateTime := int64(0) // 可选；毫秒时间戳，0 时省略。
-	supportedType := int64(0)     // 可选；渠道枚举需核实，0 时省略。
+	var supportedType *int64      // 可选；渠道枚举需核实，nil 时省略。
 	var langList []string         // 可选；一般不传，多语言查询影响性能。
 
 	if catID <= 0 {

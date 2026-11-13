@@ -27,7 +27,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	siteID := int64(0) // 可选，不按站点筛选时保持 0，SDK 会省略。
+	siteID := int64(0) // 可选；正数站点 ID，0 时不发送。
 
 	client := temu.NewClient(credentials.AppKey, credentials.AppSecret, credentials.AccessToken)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
