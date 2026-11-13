@@ -37,6 +37,8 @@ temu-sdk-go/
 │   ├── product/  # 11 个货品域示例，保留商品发布数据准备流程
 │   ├── image/    # 图片上传示例
 │   ├── config/   # 公共凭据加载：环境变量优先、examples/.env 回退
+│   ├── go.mod    # 独立示例模块，主 SDK 下载时排除整个 examples
+│   ├── tests/config/ # 示例公共配置与请求读取测试
 │   ├── .env.example # 可提交的空配置模板
 │   └── README.md # 示例索引与执行方式
 ├── scripts/generate_api_models.py # 参数转换辅助工具，结果输出到指定目录供人工对照
@@ -98,7 +100,7 @@ temu-sdk-go/
 - 按用户明确要求，当前命令行调试例外：发送前将请求方法、URL、请求头和已签名请求参数原样输出到 stderr，不脱敏（含 access_token、app_key、sign 及图片签名链接）。app_secret 不属于请求参数，仍不输出；结果 JSON 独立输出到 stdout。
 - 对新增、修改、删除商品等写入操作，不进行未经文档确认可安全重试的自动重试，避免重复执行。
 - 为签名、参数转换和错误处理等关键逻辑编写测试；测试优先使用模拟服务，避免默认调用真实商家接口。
-- 测试文件统一放在 `tests/` 下按模块分目录，测试数据放在 `tests/testdata/`，不散落到生产代码目录。通过公开入口验证行为，不为测试单独公开内部实现函数。
+- 各模块测试统一放在该模块的 `tests/` 下：SDK 为根目录 `tests/`，独立示例模块为 `examples/tests/`；测试数据放在各模块 tests/testdata/，不散落到生产代码目录。通过公开入口验证行为，不为测试单独公开内部实现函数。
 - 提交变更前执行 `go test ./...` 和 `go vet ./...`。若受环境或外部条件限制无法完成，明确说明原因，不将模拟测试描述为真实接口验证。
 - 新增接口时，在 `docs/` 中记录文档来源、配置方式、调用示例和已知限制；示例只使用占位凭据。
 
@@ -115,3 +117,5 @@ temu-sdk-go/
 使用 JSON 文件作为业务参数的调用示例统一通过 examples/config.LoadRequest() 读取接口目录中的 request.json，不内嵌 requestJSON 字符串或添加恒定空字符串判断。缺文件时提示复制同目录 request.example.json 并填写，不能自动使用占位模板发起请求，不覆盖本地参数。公共读取器严格接受一个 JSON 对象并拒绝未知字段。商品发布原有 product-request.json 和特殊数据准备流程保持明确记录。
 
 商品发布 request.example.json 按用户明确授权与其成功上架的 product-request.json 同步，属于业务案例模板例外（仍不含公共鉴权凭据）；其他接口模板继续使用结构占位值。发品缺本地文件时从该模板生成，不再维护重复的虚构双款 makeRequest 数据。
+
+examples 是独立 Go Module（同路径子模块），通过 examples/go.mod 的本地 replace 使用根 SDK；主模块不得依赖示例模块。go.work 仅用于本地开发并忽略，不提交。克隆仓库后在根目录运行 go work init . ./examples，随后可从根目录运行既有示例命令。验证发布隔离时用 GOWORK=off go test ./...、GOWORK=off go vet ./...；开发环境对两个模块执行 go test ./... ./examples/...、go vet ./... ./examples/...。README 仅保留接口分类、安装和基本用法，开发发布细节放独立文档。

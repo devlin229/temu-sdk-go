@@ -8,6 +8,8 @@
 /temu-tool
 *.test
 coverage.out
+/go.work
+/go.work.sum
 /image-base64.txt
 
 # 示例目录下的请求、响应及调试 JSON

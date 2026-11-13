@@ -69,7 +69,10 @@ func envPath() (string, error) {
 	}
 	for {
 		if info, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil && !info.IsDir() {
-			return filepath.Join(dir, "examples", ".env"), nil
+			// examples 是独立模块；继续向上找包含 examples 目录的仓库根目录。
+			if examples, err := os.Stat(filepath.Join(dir, "examples")); err == nil && examples.IsDir() {
+				return filepath.Join(dir, "examples", ".env"), nil
+			}
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {

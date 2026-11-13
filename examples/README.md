@@ -1,5 +1,15 @@
 # 接口调用示例
 
+examples 是独立 Go Module，依赖本地上级 SDK；主 SDK 的 go get 下载包不会包含此目录。克隆完整仓库后，首次在项目根目录创建本地工作区（若已有 go.work 则跳过）：
+
+```sh
+go work init . ./examples
+```
+
+之后继续从项目根目录运行下方 go run 命令。本地 go.work 和 go.work.sum 已被 Git 忽略，不作为 SDK 发布内容。
+
+验证两个模块使用 `go test ./... ./examples/...` 和 `go vet ./... ./examples/...`；示例配置测试位于 examples/tests/config。
+
 后续新增或修改示例时，生成的请求参数、响应结果及其他调试 JSON 一律保存到该接口的示例目录，与 main.go 放在一起。已有请求也从该目录读取，不在项目根目录生成或查找。文件路径按从项目根目录执行组织，本地请求和生成文件由 .gitignore 排除，只有不含凭据的 request.example.json 模板允许提交；用户编辑的请求不得被覆盖。
 
 示例按 SDK 业务域分组，每个接口独立一个 main 包，目录名统一为接口 type 将点替换为下划线：
