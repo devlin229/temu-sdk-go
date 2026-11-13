@@ -12,7 +12,7 @@ import (
 // 不自动重试；业务失败保留完整响应，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsAddProperty(ctx context.Context, request *edit.BgGloGoodsAddPropertyRequest) (*edit.BgGloGoodsAddPropertyRespose, error) {
 	if request == nil {
-		return nil, errors.New("新增货品属性请求不能为空")
+		return nil, errors.New("bg.glo.goods.add.property: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.add.property"
 	var response edit.BgGloGoodsAddPropertyRespose
@@ -30,7 +30,7 @@ func (t *Temu) BgGloGoodsAddProperty(ctx context.Context, request *edit.BgGloGoo
 // 不自动重试；业务失败保留完整响应，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsEditPicturesSubmit(ctx context.Context, request *edit.BgGloGoodsEditPicturesSubmitRequest) (*edit.BgGloGoodsEditPicturesSubmitRespose, error) {
 	if request == nil {
-		return nil, errors.New("修改商品素材请求不能为空")
+		return nil, errors.New("bg.glo.goods.edit.pictures.submit: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.edit.pictures.submit"
 	var response edit.BgGloGoodsEditPicturesSubmitRespose
@@ -48,7 +48,7 @@ func (t *Temu) BgGloGoodsEditPicturesSubmit(ctx context.Context, request *edit.B
 // 不自动重试；业务失败保留完整响应，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsEditProperty(ctx context.Context, request *edit.BgGloGoodsEditPropertyRequest) (*edit.BgGloGoodsEditPropertyRespose, error) {
 	if request == nil {
-		return nil, errors.New("编辑货品属性请求不能为空")
+		return nil, errors.New("bg.glo.goods.edit.property: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.edit.property"
 	var response edit.BgGloGoodsEditPropertyRespose
@@ -66,7 +66,7 @@ func (t *Temu) BgGloGoodsEditProperty(ctx context.Context, request *edit.BgGloGo
 // 不自动重试；业务失败保留完整响应，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsEditSensitiveAttr(ctx context.Context, request *edit.BgGloGoodsEditSensitiveAttrRequest) (*edit.BgGloGoodsEditSensitiveAttrRespose, error) {
 	if request == nil {
-		return nil, errors.New("编辑货品敏感品属性请求不能为空")
+		return nil, errors.New("bg.glo.goods.edit.sensitive.attr: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.edit.sensitive.attr"
 	var response edit.BgGloGoodsEditSensitiveAttrRespose
@@ -84,7 +84,7 @@ func (t *Temu) BgGloGoodsEditSensitiveAttr(ctx context.Context, request *edit.Bg
 // 不自动重试；业务失败保留完整响应，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsEditTaskApply(ctx context.Context, request *edit.BgGloGoodsEditTaskApplyRequest) (*edit.BgGloGoodsEditTaskApplyRespose, error) {
 	if request == nil {
-		return nil, errors.New("发起货品修改单请求不能为空")
+		return nil, errors.New("bg.glo.goods.edit.task.apply: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.edit.task.apply"
 	var response edit.BgGloGoodsEditTaskApplyRespose
@@ -102,7 +102,7 @@ func (t *Temu) BgGloGoodsEditTaskApply(ctx context.Context, request *edit.BgGloG
 // 不自动重试；业务失败保留完整响应，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsEditTaskSubmit(ctx context.Context, request *edit.BgGloGoodsEditTaskSubmitRequest) (*edit.BgGloGoodsEditTaskSubmitRespose, error) {
 	if request == nil {
-		return nil, errors.New("提交货品修改单请求不能为空")
+		return nil, errors.New("bg.glo.goods.edit.task.submit: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.edit.task.submit"
 	var response edit.BgGloGoodsEditTaskSubmitRespose
@@ -120,7 +120,7 @@ func (t *Temu) BgGloGoodsEditTaskSubmit(ctx context.Context, request *edit.BgGlo
 // 不自动重试；业务失败保留完整响应，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsUpdate(ctx context.Context, request *edit.BgGloGoodsUpdateRequest) (*edit.BgGloGoodsUpdateRespose, error) {
 	if request == nil {
-		return nil, errors.New("货品更新接口请求不能为空")
+		return nil, errors.New("bg.glo.goods.update: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.update"
 	var response edit.BgGloGoodsUpdateRespose
@@ -138,7 +138,7 @@ func (t *Temu) BgGloGoodsUpdate(ctx context.Context, request *edit.BgGloGoodsUpd
 // 不自动重试；业务失败保留完整响应，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodslogisticsTemplateEdit(ctx context.Context, request *edit.BgGloGoodslogisticsTemplateEditRequest) (*edit.BgGloGoodslogisticsTemplateEditRespose, error) {
 	if request == nil {
-		return nil, errors.New("编辑商品运费模板请求不能为空")
+		return nil, errors.New("bg.glo.goodslogistics.template.edit: request must not be nil")
 	}
 	const apiType = "bg.glo.goodslogistics.template.edit"
 	var response edit.BgGloGoodslogisticsTemplateEditRespose

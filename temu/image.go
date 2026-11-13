@@ -13,7 +13,7 @@ import (
 // 业务失败时同时返回完整响应与 *BusinessError；传输或解析失败时响应为 nil。
 func (t *Temu) BgGoodsImageUploadGlobal(ctx context.Context, request *image.BgGoodsImageUploadGlobalRequest) (*image.BgGoodsImageUploadGlobalRespose, error) {
 	if request == nil {
-		return nil, errors.New("图片上传请求不能为空")
+		return nil, errors.New("bg.goods.image.upload.global: request must not be nil")
 	}
 	const apiType = "bg.goods.image.upload.global"
 	var response image.BgGoodsImageUploadGlobalRespose

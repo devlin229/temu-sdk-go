@@ -13,7 +13,7 @@ import (
 // 不自动重试；业务失败返回完整响应及 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsSpecCreate(ctx context.Context, request *category.BgGloGoodsSpecCreateRequest) (*category.BgGloGoodsSpecCreateRespose, error) {
 	if request == nil {
-		return nil, errors.New("创建规格请求不能为空")
+		return nil, errors.New("bg.glo.goods.spec.create: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.spec.create"
 	var response category.BgGloGoodsSpecCreateRespose
@@ -36,7 +36,7 @@ func (t *Temu) BgGloGoodsSpecCreate(ctx context.Context, request *category.BgGlo
 // 业务失败时同时返回完整响应与 *BusinessError；传输或解析失败时响应为 nil。
 func (t *Temu) BgGloGoodsAttrsGet(ctx context.Context, request *category.BgGloGoodsAttrsGetRequest) (*category.BgGloGoodsAttrsGetRespose, error) {
 	if request == nil {
-		return nil, errors.New("类目属性查询请求不能为空")
+		return nil, errors.New("bg.glo.goods.attrs.get: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.attrs.get"
 	var response category.BgGloGoodsAttrsGetRespose
@@ -59,7 +59,7 @@ func (t *Temu) BgGloGoodsAttrsGet(ctx context.Context, request *category.BgGloGo
 // 业务失败时同时返回完整响应与 *BusinessError；传输或解析失败时响应为 nil。
 func (t *Temu) BgGloGoodsCategoryMatch(ctx context.Context, request *category.BgGloGoodsCategoryMatchRequest) (*category.BgGloGoodsCategoryMatchRespose, error) {
 	if request == nil {
-		return nil, errors.New("类目搜索请求不能为空")
+		return nil, errors.New("bg.glo.goods.category.match: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.category.match"
 	var response category.BgGloGoodsCategoryMatchRespose
@@ -101,7 +101,7 @@ func (t *Temu) BgGloGoodsParentspecGet(ctx context.Context) (*category.BgGloGood
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsAccessoriesGet(ctx context.Context, request *category.BgGloGoodsAccessoriesGetRequest) (*category.BgGloGoodsAccessoriesGetRespose, error) {
 	if request == nil {
-		return nil, errors.New("货品包装清单类型查询请求不能为空")
+		return nil, errors.New("bg.glo.goods.accessories.get: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.accessories.get"
 	var response category.BgGloGoodsAccessoriesGetRespose
@@ -123,7 +123,7 @@ func (t *Temu) BgGloGoodsAccessoriesGet(ctx context.Context, request *category.B
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsCatsGet(ctx context.Context, request *category.BgGloGoodsCatsGetRequest) (*category.BgGloGoodsCatsGetRespose, error) {
 	if request == nil {
-		return nil, errors.New("子类目查询请求不能为空")
+		return nil, errors.New("bg.glo.goods.cats.get: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.cats.get"
 	var response category.BgGloGoodsCatsGetRespose
@@ -145,7 +145,7 @@ func (t *Temu) BgGloGoodsCatsGet(ctx context.Context, request *category.BgGloGoo
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsCatsmandatoryGet(ctx context.Context, request *category.BgGloGoodsCatsmandatoryGetRequest) (*category.BgGloGoodsCatsmandatoryGetRespose, error) {
 	if request == nil {
-		return nil, errors.New("类目必填信息接口请求不能为空")
+		return nil, errors.New("bg.glo.goods.catsmandatory.get: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.catsmandatory.get"
 	var response category.BgGloGoodsCatsmandatoryGetRespose
@@ -167,7 +167,7 @@ func (t *Temu) BgGloGoodsCatsmandatoryGet(ctx context.Context, request *category
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloOemPageList(ctx context.Context, request *category.BgGloOemPageListRequest) (*category.BgGloOemPageListRespose, error) {
 	if request == nil {
-		return nil, errors.New("检索OE/OEM数据请求不能为空")
+		return nil, errors.New("bg.glo.oem.page.list: request must not be nil")
 	}
 	const apiType = "bg.glo.oem.page.list"
 	var response category.BgGloOemPageListRespose
@@ -189,7 +189,7 @@ func (t *Temu) BgGloOemPageList(ctx context.Context, request *category.BgGloOemP
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGoodsAttributeMappingGlobal(ctx context.Context, request *category.BgGoodsAttributeMappingGlobalRequest) (*category.BgGoodsAttributeMappingGlobalRespose, error) {
 	if request == nil {
-		return nil, errors.New("内外属性映射请求不能为空")
+		return nil, errors.New("bg.goods.attribute.mapping.global: request must not be nil")
 	}
 	const apiType = "bg.goods.attribute.mapping.global"
 	var response category.BgGoodsAttributeMappingGlobalRespose
@@ -211,7 +211,7 @@ func (t *Temu) BgGoodsAttributeMappingGlobal(ctx context.Context, request *categ
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGoodsRedressCorrectrecordQuery(ctx context.Context, request *category.BgGoodsRedressCorrectrecordQueryRequest) (*category.BgGoodsRedressCorrectrecordQueryRespose, error) {
 	if request == nil {
-		return nil, errors.New("查询商品类目纠正列表请求不能为空")
+		return nil, errors.New("bg.goods.redress.correctrecord.query: request must not be nil")
 	}
 	const apiType = "bg.goods.redress.correctrecord.query"
 	var response category.BgGoodsRedressCorrectrecordQueryRespose
@@ -233,7 +233,7 @@ func (t *Temu) BgGoodsRedressCorrectrecordQuery(ctx context.Context, request *ca
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGoodsRedressOptionalcategoryCorrect(ctx context.Context, request *category.BgGoodsRedressOptionalcategoryCorrectRequest) (*category.BgGoodsRedressOptionalcategoryCorrectRespose, error) {
 	if request == nil {
-		return nil, errors.New("纠正商品类目请求不能为空")
+		return nil, errors.New("bg.goods.redress.optionalcategory.correct: request must not be nil")
 	}
 	const apiType = "bg.goods.redress.optionalcategory.correct"
 	var response category.BgGoodsRedressOptionalcategoryCorrectRespose

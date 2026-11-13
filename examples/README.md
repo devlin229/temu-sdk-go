@@ -33,7 +33,7 @@ go run ./examples/product/bg_glo_goods_list_get
 go run ./examples/image/bg_goods_image_upload_global
 ```
 
-凭据由 `config.LoadCredentials()` 统一读取，业务参数仍在对应示例中准备。使用公共读取方法的新 PA 示例从同目录 request.json 加载业务字段；已有上传、商品发布及规格等示例保留各自的数据准备流程。从项目根目录运行时，请求 JSON 与响应结果统一读写到各自接口示例目录。结果输出到 stdout，调试请求输出到 stderr。运行会真实调用接口，写接口不自动重试；自动化模拟测试仍位于 tests/。
+凭据由 `config.LoadCredentials()` 统一读取，业务参数仍在对应示例中准备。使用公共读取方法的新 PA 示例从同目录 request.json 加载业务字段；已有上传、商品发布及规格等示例保留各自的数据准备流程。从项目根目录运行时，请求 JSON 与响应结果统一读写到各自接口示例目录。结果输出到 stdout，错误输出到 stderr；SDK 不自动打印请求或鉴权数据。运行会真实调用接口，写接口不自动重试；自动化模拟测试仍位于 tests/。
 
 | 分组 | 接口 | 用途 | 目录 |
 | --- | --- | --- | --- |

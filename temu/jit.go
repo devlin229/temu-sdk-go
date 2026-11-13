@@ -13,7 +13,7 @@ import (
 // 业务失败返回完整响应与 *BusinessError；传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloJitmodeActivate(ctx context.Context, request *jit.BgGloJitmodeActivateRequest) (*jit.BgGloJitmodeActivateRespose, error) {
 	if request == nil {
-		return nil, errors.New("JIT 操作请求不能为空")
+		return nil, errors.New("bg.glo.jitmode.activate: request must not be nil")
 	}
 	const apiType = "bg.glo.jitmode.activate"
 	var response jit.BgGloJitmodeActivateRespose

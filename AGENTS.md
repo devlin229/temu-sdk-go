@@ -108,7 +108,8 @@ temu-sdk-go/
 - 共用参数类型统一维护在 `temu/common/params.go`，业务模型直接引用 common 包，不在 temu 根包保留参数类型别名或重复的 params.go。
 - Cookie、Token、App Secret 等凭据通过环境变量或本地配置提供，不硬编码、不提交到仓库、不写入日志；日志中的敏感字段必须脱敏。
 - 示例凭据统一调用 `examples/config.LoadCredentials()`：优先读取 `TEMU_APP_KEY`、`TEMU_APP_SECRET`、`TEMU_ACCESS_TOKEN` 系统环境变量，缺失字段从 `examples/.env` 补齐，仍缺失则报错。不得在各示例硬编码或重复读取凭据；`.env` 不提交，`.env.example` 只保留空占位。`examples/product/bg_glo_goods_add/` 的商品发布模板按用户授权复制成功上架的单款 product-request.json，缺文件时由嵌入的 request.example.json 生成。该成功案例只代表用户反馈的特定店铺与参数，不推断为任意商家通用有效。
-- 按用户明确要求，当前命令行调试例外：发送前将请求方法、URL、请求头和已签名请求参数原样输出到 stderr，不脱敏（含 access_token、app_key、sign 及图片签名链接）。app_secret 不属于请求参数，仍不输出；结果 JSON 独立输出到 stdout。
+- SDK 不自动输出请求方法、URL、请求头、签名参数或响应日志，避免泄露凭据、签名链接、图片和业务数据。示例可显式输出接口响应及错误，但不得恢复客户端的原始请求日志。
+- SDK 自行生成的错误提示统一使用英文；平台返回的 errorMsg、业务错误码及 ResponseError.Body 原样保留，不翻译、不改写。错误包装继续保留底层原因及 errors.Is/As 行为。
 - 对新增、修改、删除商品等写入操作，不进行未经文档确认可安全重试的自动重试，避免重复执行。
 - 为签名、参数转换和错误处理等关键逻辑编写测试；测试优先使用模拟服务，避免默认调用真实商家接口。
 - 各模块测试统一放在该模块的 `tests/` 下：SDK 为根目录 `tests/`，独立示例模块为 `examples/tests/`；测试数据放在各模块 tests/testdata/，不散落到生产代码目录。通过公开入口验证行为，不为测试单独公开内部实现函数。

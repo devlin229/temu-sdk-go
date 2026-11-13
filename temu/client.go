@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -46,11 +45,11 @@ func NewClient(appKey, appSecret, accessToken string) *Temu {
 func (t *Temu) requestInto(ctx context.Context, gateway, apiType string, params, result any) error {
 	raw, err := json.Marshal(params)
 	if err != nil {
-		return fmt.Errorf("编码业务参数: %w", err)
+		return fmt.Errorf("encode business parameters: %w", err)
 	}
 	var body map[string]json.RawMessage
 	if err = json.Unmarshal(raw, &body); err != nil {
-		return fmt.Errorf("业务参数必须是对象: %w", err)
+		return fmt.Errorf("business parameters must be a JSON object: %w", err)
 	}
 	if body == nil {
 		body = make(map[string]json.RawMessage)
@@ -72,21 +71,16 @@ func (t *Temu) requestInto(ctx context.Context, gateway, apiType string, params,
 	body["sign"], _ = json.Marshal(signature)
 	payload, err := json.Marshal(body)
 	if err != nil {
-		return fmt.Errorf("编码请求参数: %w", err)
+		return fmt.Errorf("encode request parameters: %w", err)
 	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, gateway, bytes.NewReader(payload))
 	if err != nil {
-		return fmt.Errorf("构造请求: %w", err)
+		return fmt.Errorf("create request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	// 按当前调试要求原样输出最终请求，日志中的 payload 就是实际发送的字节。
-	// app_secret 仅用于签名，不在请求参数和日志中输出。
-	if _, err := fmt.Fprintf(os.Stderr, "请求方法: %s\n请求URL: %s\n请求头: %v\n请求参数: %s\n", req.Method, req.URL.String(), req.Header, payload); err != nil {
-		return fmt.Errorf("输出请求日志: %w", err)
-	}
 	resp, err := t.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("调用 %s: %w", apiType, err)
+		return fmt.Errorf("call %s: %w", apiType, err)
 	}
 	defer resp.Body.Close()
 	// 先保留原始正文，HTTP 错误或模型解析失败时调用方仍能获取平台实际返回。
@@ -94,7 +88,7 @@ func (t *Temu) requestInto(ctx context.Context, gateway, apiType string, params,
 	if err != nil {
 		return &ResponseError{
 			APIType: apiType, StatusCode: resp.StatusCode, Body: responseBody,
-			Err: fmt.Errorf("读取响应正文: %w", err),
+			Err: fmt.Errorf("read response body: %w", err),
 		}
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
@@ -105,7 +99,7 @@ func (t *Temu) requestInto(ctx context.Context, gateway, apiType string, params,
 	if err = decoder.Decode(result); err != nil {
 		return &ResponseError{
 			APIType: apiType, StatusCode: resp.StatusCode, Body: responseBody,
-			Err: fmt.Errorf("解析响应: %w", err),
+			Err: fmt.Errorf("decode response: %w", err),
 		}
 	}
 	return nil

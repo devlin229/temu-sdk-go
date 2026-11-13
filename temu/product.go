@@ -14,7 +14,7 @@ import (
 // 成功不表示商品已审核或可售；调用方应保存结果中的商品、SKC、SKU ID 与编码映射。
 func (t *Temu) BgGloGoodsAdd(ctx context.Context, request *product.BgGloGoodsAddRequest) (*product.BgGloGoodsAddRespose, error) {
 	if request == nil {
-		return nil, errors.New("商品发布请求不能为空")
+		return nil, errors.New("bg.glo.goods.add: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.add"
 	var response product.BgGloGoodsAddRespose
@@ -36,7 +36,7 @@ func (t *Temu) BgGloGoodsAdd(ctx context.Context, request *product.BgGloGoodsAdd
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgBtgGoodsStockWarehouseListGet(ctx context.Context, request *product.BgBtgGoodsStockWarehouseListGetRequest) (*product.BgBtgGoodsStockWarehouseListGetRespose, error) {
 	if request == nil {
-		return nil, errors.New("根据站点查询可绑定的发货仓库信息接口请求不能为空")
+		return nil, errors.New("bg.btg.goods.stock.warehouse.list.get: request must not be nil")
 	}
 	const apiType = "bg.btg.goods.stock.warehouse.list.get"
 	var response product.BgBtgGoodsStockWarehouseListGetRespose
@@ -58,7 +58,7 @@ func (t *Temu) BgBtgGoodsStockWarehouseListGet(ctx context.Context, request *pro
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloBestSellerInvitationQuery(ctx context.Context, request *product.BgGloBestSellerInvitationQueryRequest) (*product.BgGloBestSellerInvitationQueryRespose, error) {
 	if request == nil {
-		return nil, errors.New("best seller招标单查询请求不能为空")
+		return nil, errors.New("bg.glo.best.seller.invitation.query: request must not be nil")
 	}
 	const apiType = "bg.glo.best.seller.invitation.query"
 	var response product.BgGloBestSellerInvitationQueryRespose
@@ -80,7 +80,7 @@ func (t *Temu) BgGloBestSellerInvitationQuery(ctx context.Context, request *prod
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsBrandGet(ctx context.Context, request *product.BgGloGoodsBrandGetRequest) (*product.BgGloGoodsBrandGetRespose, error) {
 	if request == nil {
-		return nil, errors.New("货品品牌查询请求不能为空")
+		return nil, errors.New("bg.glo.goods.brand.get: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.brand.get"
 	var response product.BgGloGoodsBrandGetRespose
@@ -102,7 +102,7 @@ func (t *Temu) BgGloGoodsBrandGet(ctx context.Context, request *product.BgGloGoo
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsDetailGet(ctx context.Context, request *product.BgGloGoodsDetailGetRequest) (*product.BgGloGoodsDetailGetRespose, error) {
 	if request == nil {
-		return nil, errors.New("商品详情查询接口请求不能为空")
+		return nil, errors.New("bg.glo.goods.detail.get: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.detail.get"
 	var response product.BgGloGoodsDetailGetRespose
@@ -124,7 +124,7 @@ func (t *Temu) BgGloGoodsDetailGet(ctx context.Context, request *product.BgGloGo
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsListGet(ctx context.Context, request *product.BgGloGoodsListGetRequest) (*product.BgGloGoodsListGetRespose, error) {
 	if request == nil {
-		return nil, errors.New("商品列表查询请求不能为空")
+		return nil, errors.New("bg.glo.goods.list.get: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.list.get"
 	var response product.BgGloGoodsListGetRespose
@@ -146,7 +146,7 @@ func (t *Temu) BgGloGoodsListGet(ctx context.Context, request *product.BgGloGood
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsMigrate(ctx context.Context, request *product.BgGloGoodsMigrateRequest) (*product.BgGloGoodsMigrateRespose, error) {
 	if request == nil {
-		return nil, errors.New("货品搬运接口请求不能为空")
+		return nil, errors.New("bg.glo.goods.migrate: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.migrate"
 	var response product.BgGloGoodsMigrateRespose
@@ -168,7 +168,7 @@ func (t *Temu) BgGloGoodsMigrate(ctx context.Context, request *product.BgGloGood
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloGoodsRemovedGet(ctx context.Context, request *product.BgGloGoodsRemovedGetRequest) (*product.BgGloGoodsRemovedGetRespose, error) {
 	if request == nil {
-		return nil, errors.New("卖家中心已废弃列表请求不能为空")
+		return nil, errors.New("bg.glo.goods.removed.get: request must not be nil")
 	}
 	const apiType = "bg.glo.goods.removed.get"
 	var response product.BgGloGoodsRemovedGetRespose
@@ -209,7 +209,7 @@ func (t *Temu) BgGloGoodsTopsellingSoldoutGet(ctx context.Context) (*product.BgG
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloLogisticsTemplateGet(ctx context.Context, request *product.BgGloLogisticsTemplateGetRequest) (*product.BgGloLogisticsTemplateGetRespose, error) {
 	if request == nil {
-		return nil, errors.New("查询运费模板列表请求不能为空")
+		return nil, errors.New("bg.glo.logistics.template.get: request must not be nil")
 	}
 	const apiType = "bg.glo.logistics.template.get"
 	var response product.BgGloLogisticsTemplateGetRespose
@@ -231,7 +231,7 @@ func (t *Temu) BgGloLogisticsTemplateGet(ctx context.Context, request *product.B
 // 不自动重试；业务失败返回完整响应与 *BusinessError，传输或解析失败返回 nil 响应。
 func (t *Temu) BgGloProductSearch(ctx context.Context, request *product.BgGloProductSearchRequest) (*product.BgGloProductSearchRespose, error) {
 	if request == nil {
-		return nil, errors.New("查询货品生命周期状态请求不能为空")
+		return nil, errors.New("bg.glo.product.search: request must not be nil")
 	}
 	const apiType = "bg.glo.product.search"
 	var response product.BgGloProductSearchRespose

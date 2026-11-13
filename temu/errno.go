@@ -10,7 +10,7 @@ type BusinessError struct {
 }
 
 func (e *BusinessError) Error() string {
-	return fmt.Sprintf("Temu %s 业务失败（%d）: %s", e.APIType, e.Code, e.Message)
+	return fmt.Sprintf("Temu %s business error (%d): %s", e.APIType, e.Code, e.Message)
 }
 
 // ResponseError 表示已收到 HTTP 响应，但状态异常、正文读取失败或无法解析为接口模型。
@@ -24,7 +24,7 @@ type ResponseError struct {
 }
 
 func (e *ResponseError) Error() string {
-	message := fmt.Sprintf("Temu %s 返回 HTTP %d", e.APIType, e.StatusCode)
+	message := fmt.Sprintf("Temu %s returned HTTP %d", e.APIType, e.StatusCode)
 	if e.Err != nil {
 		message += ": " + e.Err.Error()
 	}
