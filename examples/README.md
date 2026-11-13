@@ -21,7 +21,7 @@ go run ./examples/product/bg_glo_goods_list_get
 go run ./examples/image/bg_goods_image_upload_global
 ```
 
-凭据由 `config.LoadCredentials()` 统一读取，业务参数仍在对应示例中准备。新 PA 示例的 requestJSON 只填写业务字段；已有上传、商品发布及规格等示例保留各自的数据准备流程。从项目根目录运行时，请求 JSON 与响应结果统一读写到各自接口示例目录。结果输出到 stdout，调试请求输出到 stderr。运行会真实调用接口，写接口不自动重试；自动化模拟测试仍位于 tests/。
+凭据由 `config.LoadCredentials()` 统一读取，业务参数仍在对应示例中准备。使用公共读取方法的新 PA 示例从同目录 request.json 加载业务字段；已有上传、商品发布及规格等示例保留各自的数据准备流程。从项目根目录运行时，请求 JSON 与响应结果统一读写到各自接口示例目录。结果输出到 stdout，调试请求输出到 stderr。运行会真实调用接口，写接口不自动重试；自动化模拟测试仍位于 tests/。
 
 | 分组 | 接口 | 用途 | 目录 |
 | --- | --- | --- | --- |
@@ -87,7 +87,7 @@ cp -n examples/product/bg_glo_goods_add/request.example.json examples/product/bg
 
 如果本地文件已经存在，保留已有文件，避免覆盖。编辑 product-request.json 后再运行示例；原有缺文件时生成测试数据的行为保留。
 
-其他 PA 示例目前仍从 main.go 的 requestJSON 字符串或结构体字段取参数：可以复制模板内容、填好业务值后粘贴到 requestJSON（建议使用 Go 反引号字符串），或据此填写结构体。单独复制成 request.json 不会自动被这些示例读取。图片上传示例继续按 imagePath 读取图片并编码，模板只用于查看上传选项结构。
+原来内嵌 requestJSON 的 16 个 PA 示例已统一调用 config.LoadRequest()，读取接口目录中的 request.json，不再修改源码里的 JSON 字符串。先复制同目录的 request.example.json 为 request.json，填好业务参数、删去不需要的可选字段后运行；全可选接口可以将本地文件改成 {}。缺文件、JSON 格式错误或字段不匹配时直接报错，不自动创建、不覆盖、不回退到占位模板。原有类目搜索、属性查询和规格创建示例仍按 main.go 中明确的结构体字段取参。图片上传继续按 imagePath 读取图片并编码，商品发布继续读取 product-request.json。
 
 Git 规则为：
 
@@ -97,3 +97,11 @@ Git 规则为：
 ```
 
 因此别人检出仓库能获得模板；本地请求、响应及调试 JSON 仍保持忽略。模板中不得添加 Token、App Secret、真实签名、真实商家参数或其他本地配置。
+
+例如包装清单查询，从项目根目录执行：
+
+```sh
+cp -n examples/category/bg_glo_goods_accessories_get/request.example.json examples/category/bg_glo_goods_accessories_get/request.json
+# 编辑 request.json，填写业务值或按需要使用 {}
+go run ./examples/category/bg_glo_goods_accessories_get
+```

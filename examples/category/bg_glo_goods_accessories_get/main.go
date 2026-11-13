@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -21,37 +20,31 @@ func main() {
 	}
 }
 
-// 业务字段结构参考同目录 request.example.json；占位值需替换，不能直接发起真实业务。
+// 将同目录 request.example.json 复制为 request.json，填写真实业务参数后运行。
 func run() error {
 	// 凭据统一从系统环境变量或 examples/.env 获取；运行前核对是否为写操作。
 	credentials, err := config.LoadCredentials()
 	if err != nil {
 		return err
 	}
-	// 填写真实业务 JSON，字段见 docs/Temu_PA_APIs/category/bg.glo.goods.accessories.get/parameters.json。
-	requestJSON := "{}"
-	if requestJSON == "" {
-		return errors.New("请先填写 requestJSON 中的真实业务参数")
-	}
 	var request category.BgGloGoodsAccessoriesGetRequest
-	decoder := json.NewDecoder(bytes.NewBufferString(requestJSON))
-	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&request); err != nil {
-		return fmt.Errorf("解析业务参数: %w", err)
+	if err = config.LoadRequest("examples/category/bg_glo_goods_accessories_get/request.json", &request); err != nil {
+		return err
 	}
 	client := temu.NewClient(credentials.AppKey, credentials.AppSecret, credentials.AccessToken)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	response, callErr := client.BgGloGoodsAccessoriesGet(ctx, &request)
 	if response != nil {
-		raw, err := json.MarshalIndent(response, "", "  ")
+		var raw []byte
+		raw, err = json.MarshalIndent(response, "", "  ")
 		if err != nil {
 			return errors.Join(callErr, fmt.Errorf("编码响应: %w", err))
 		}
-		if err := os.WriteFile("examples/category/bg_glo_goods_accessories_get/bg_glo_goods_accessories_get-result.json", append(raw, '\n'), 0o600); err != nil {
+		if err = os.WriteFile("examples/category/bg_glo_goods_accessories_get/bg_glo_goods_accessories_get-result.json", append(raw, '\n'), 0o600); err != nil {
 			return errors.Join(callErr, fmt.Errorf("保存响应: %w", err))
 		}
-		if _, err := fmt.Fprintln(os.Stdout, string(raw)); err != nil {
+		if _, err = fmt.Fprintln(os.Stdout, string(raw)); err != nil {
 			return errors.Join(callErr, fmt.Errorf("输出响应: %w", err))
 		}
 	}

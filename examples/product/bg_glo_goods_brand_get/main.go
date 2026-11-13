@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -21,23 +20,16 @@ func main() {
 	}
 }
 
-// 业务字段结构参考同目录 request.example.json；占位值需替换，不能直接发起真实业务。
+// 将同目录 request.example.json 复制为 request.json，填写真实业务参数后运行。
 func run() error {
 	// 凭据统一从系统环境变量或 examples/.env 获取；运行前核对是否为写操作。
 	credentials, err := config.LoadCredentials()
 	if err != nil {
 		return err
 	}
-	// 填写真实业务 JSON，字段见 docs/Temu_PA_APIs/product/bg.glo.goods.brand.get/parameters.json。
-	requestJSON := ""
-	if requestJSON == "" {
-		return errors.New("请先填写 requestJSON 中的真实业务参数")
-	}
 	var request product.BgGloGoodsBrandGetRequest
-	decoder := json.NewDecoder(bytes.NewBufferString(requestJSON))
-	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&request); err != nil {
-		return fmt.Errorf("解析业务参数: %w", err)
+	if err := config.LoadRequest("examples/product/bg_glo_goods_brand_get/request.json", &request); err != nil {
+		return err
 	}
 	client := temu.NewClient(credentials.AppKey, credentials.AppSecret, credentials.AccessToken)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
