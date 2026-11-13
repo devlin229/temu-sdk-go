@@ -32,7 +32,7 @@ func run() error {
 		if err != nil {
 			return errors.Join(queryErr, fmt.Errorf("编码父规格响应: %w", err))
 		}
-		if err = os.WriteFile("parentspec-result.json", append(raw, '\n'), 0o600); err != nil {
+		if err = os.WriteFile("examples/category/bg_glo_goods_parentspec_get/parentspec-result.json", append(raw, '\n'), 0o600); err != nil {
 			return errors.Join(queryErr, fmt.Errorf("保存父规格响应: %w", err))
 		}
 		if _, err = fmt.Fprintln(os.Stdout, string(raw)); err != nil {

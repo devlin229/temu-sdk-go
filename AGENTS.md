@@ -2,7 +2,7 @@
 
 `temu-tool` 是使用 Go 开发的 Temu 接口对接工具，用于辅助商家执行商品管理等日常操作。具体功能以实际接入的 Temu 官方接口和业务需求为准。
 
-当前已实现公共签名与 HTTP 客户端、图片上传、商品发布、类目搜索、父规格、类目属性查询及规格创建 SDK 方法，以及七个接口的响应模型和相应业务请求模型。图片上传已由用户反馈成功；商品发布和类目搜索已通过本地模拟测试，尚未完成真实发品或类目查询联调。商品发布方法不自动查询或校验类目模板和商家模式，调用方应按文档准备业务参数并由平台验证；调用成功不代表已审核通过或已可售。
+当前已实现公共签名与 HTTP 客户端、图片上传，以及 docs/Temu_PA_APIs/category 和 product 中全部 22 个接口的 SDK 方法与明确模型。图片上传已由用户反馈成功；PA 类目及货品接口通过本地契约与模拟测试，尚未完成这批接口的真实商家联调。商品发布方法不自动查询或校验类目模板和商家模式，成功不代表审核通过或可售。
 
 ## 项目目录
 
@@ -15,32 +15,35 @@ temu-sdk-go/
 │   ├── common/response.go # 各接口共用的响应状态字段
 │   ├── common/params.go # 各接口共用的分页参数
 │   ├── image.go # 图片上传 SDK 方法
-│   ├── product.go # 商品发布 SDK 方法
-│   ├── category.go # 类目搜索、父规格、属性查询及规格创建 SDK 方法
+│   ├── product.go # PA 货品域 11 个 SDK 方法
+│   ├── category.go # PA 类目域 11 个 SDK 方法
 │   ├── category/
 │   │   ├── goods_category_match.go # 类目搜索请求及路径响应模型
 │   │   ├── goods_attrs_get.go # 类目属性模板查询请求、响应及嵌套模型
 │   │   ├── goods_spec_create.go # 创建自定义规格请求及响应模型
-│   │   └── goods_parentspec_get.go # 父规格查询响应模型，无业务请求参数
+│   │   ├── goods_parentspec_get.go # 父规格查询响应模型，无业务请求参数
+│   │   └── 其他模型文件 # 子类目、必填信息、包装清单、OEM、属性映射及类目纠正
 │   ├── product/
-│   │   ├── add_goods.go      # 商品发布请求、响应及嵌套模型
-│   │   └── goods_list_get.go # 商品列表请求、响应及嵌套模型
+│   │   ├── goods_add.go      # 商品发布请求、响应及嵌套模型
+│   │   ├── goods_list_get.go # 商品列表请求、响应及嵌套模型
+│   │   └── 其他模型文件 # 品牌、详情、搬运、仓库、招标单、废弃/售罄、运费及生命周期
 │   └── image/
 │       └── goods_image_upload_global.go # 图片上传请求、响应模型
 ├── tests/
 │   ├── temu/   # 客户端、图片上传及商品发布模拟测试
 │   └── models/ # 参数字典逐层核对、JSON 编解码及可选值测试
-├── examples/basic/ # 图片上传示例：读取本地图片、Base64 编码、调用 SDK 并输出 JSON
-├── examples/product_add/ # 两款娃娃可选 SKU 的发品测试示例，业务数据为虚构测试值
-├── examples/category_match/ # 类目搜索示例，默认搜索“娃娃”并保存响应 JSON
-├── examples/attrs_get/ # 类目属性模板查询示例，填写凭据和叶子类目 ID 后保存响应 JSON
-├── examples/spec_create/ # 创建规格调用示例，写操作，凭据及业务参数留空
-├── examples/parentspec_get/ # 父规格查询示例，凭据字符串直接填写
+├── examples/
+│   ├── category/ # 11 个类目域示例，子目录为完整接口名替换点为下划线
+│   ├── product/  # 11 个货品域示例，保留商品发布数据准备流程
+│   ├── image/    # 图片上传示例
+│   └── README.md # 示例索引与执行方式
 ├── scripts/generate_api_models.py # 参数转换辅助工具，结果输出到指定目录供人工对照
 └── docs/
     ├── product-publish.md             # 商品发布使用说明与验证边界
-    ├── API-json/                      # 三个接口的请求/响应模板与参数字典
+    ├── Temu_PA_APIs/                  # PA 请求/响应模板与参数字典
     └── API-docs/                      # Temu 接口接入文档
+        ├── PA_Category_Product_APIs.md # 22 个接口的接入清单与验证边界
+        ├── pa/category/、pa/product/   # 逐接口的来源、权限、字段、错误码及示例
         ├── Temu_Developer_Guide.md     # 网关、授权、公共参数、签名与通用排错
         ├── Temu_Product_Publish_API.md # 商品发布参数、业务约束、响应与错误码
         ├── Temu_Image_Upload_API.md    # 图片上传 SDK 使用、错误处理与验证边界
@@ -66,11 +69,13 @@ temu-sdk-go/
 - 商品发布按 `success` 判断业务成功，保留 `errorCode`、`errorMsg`；成功后保存 `result` 中的商品、SKC、SKU ID 与本地编码映射。其他接口的返回结构按各自文档解析。
 - 当前商品发布文档未给出幂等键，不能假定 `extCode` 自动去重；超时或系统异常后先核对是否已经创建，再决定是否重新提交。
 - 新接口文档放在 `docs/API-docs/`，引用通用开发文档，并补充接口适用范围、权限、字段、约束、示例、错误码及来源版本；接口特殊规则不要改成全局默认规则。
-- 三个接口的模型都是普通 SDK 源码，可直接维护；字段契约以 `docs/API-json/*.parameters.json` 为准，并由 `tests/models/` 对照字典逐层验证。`scripts/generate_api_models.py` 仅为参数转换辅助工具，必须用 `--output-dir` 指定输出目录，建议输出至临时目录供人工对照。业务校验和调用逻辑维护在独立文件中。
-- 类目搜索模型按用户提供的官方页面截图维护，字段及来源记录在 `Temu_Category_Match_API.md`；尤其保留 JSON 名称 `categoryPathDTOS`。截图未提供网关及权限信息，实现暂沿用当前 PA 网关，真实接入时需核验。
+- 接口模型都是普通 SDK 源码，可直接维护；字段契约以 `docs/Temu_PA_APIs/<领域>/<type>/parameters.json` 为准，并由 `tests/models/` 对照字典逐层验证。`scripts/generate_api_models.py` 仅为参数转换辅助工具，必须用 `--output-dir` 指定输出目录，建议输出至临时目录供人工对照。业务校验和调用逻辑维护在独立文件中。
+- 类目搜索最初按截图维护，现以 PA 参数字典为契约；保留 JSON 名称 `categoryPathDTOS`，网关与权限见对应字典，真实接入仍需验证授权。
 - 父规格查询按用户提供的截图维护，响应 JSON 名称保留 `parentSpecDTOS`，模型放在 `temu/category/`；没有业务参数的方法只接收 context，不创建多余的空 Request 类型。
 
 ## 代码规范
+
+- 示例生成的请求参数、响应结果及其他调试 JSON 文件，统一放在对应接口的示例目录 `examples/<业务域>/<接口名以下划线分词>/`，与该接口的 `main.go` 同目录；后续新增示例也必须遵循。读取已有请求 JSON 时使用该目录，不回退到项目根目录。示例默认从项目根目录运行，代码中的文件路径应明确包含对应示例目录。生成文件需加入 `.gitignore`，不覆盖用户已有请求参数。
 
 - 在未经允许的情况下严禁修改任何代码
 - 遵循 Go 通用惯例，使用 `gofmt` 格式化代码，优先使用标准库，按需引入第三方依赖。
@@ -84,8 +89,9 @@ temu-sdk-go/
 - 非必要不使用指针：普通字符串、数值和数组优先用值类型或切片；只为可选对象、可空响应、有清空语义的数组，以及必须区分未设置和零值的字段保留指针。图片上传基础字段使用值类型，imageBizType、选项开关和 sizeMode 不加 omitempty，保留有效的 0/false。
 - 各接口响应匿名嵌入 `common.Response`，复用 `Success`、`ErrorCode`、`ErrorMessage`，并单独定义具体类型的 `Result`。公共状态放在 `temu/common/`，避免业务模型与客户端循环依赖；JSON 字段仍平铺在响应根对象。
 - 鉴权、签名和公共请求逻辑集中封装；商家业务逻辑与底层 HTTP 调用分开。
+- 共用参数类型统一维护在 `temu/common/params.go`，业务模型直接引用 common 包，不在 temu 根包保留参数类型别名或重复的 params.go。
 - Cookie、Token、App Secret 等凭据通过环境变量或本地配置提供，不硬编码、不提交到仓库、不写入日志；日志中的敏感字段必须脱敏。
-- 本地测试例外：按用户明确要求，示例直接使用 `appKey`、`appSecret`、`accessToken` 等字符串，不读取环境变量或命令行参数；仓库中的凭据示例值保持为空。`examples/product_add/` 的两款娃娃业务参数按用户授权使用虚构测试值，不将这些值描述为真实类目、规格或已核实的商品参数。
+- 本地测试例外：按用户明确要求，示例直接使用 `appKey`、`appSecret`、`accessToken` 等字符串，不读取环境变量或命令行参数；仓库中的凭据示例值保持为空。`examples/product/bg_glo_goods_add/` 的两款娃娃业务参数按用户授权使用虚构测试值，不将这些值描述为真实类目、规格或已核实的商品参数。
 - 按用户明确要求，当前命令行调试例外：发送前将请求方法、URL、请求头和已签名请求参数原样输出到 stderr，不脱敏（含 access_token、app_key、sign 及图片签名链接）。app_secret 不属于请求参数，仍不输出；结果 JSON 独立输出到 stdout。
 - 对新增、修改、删除商品等写入操作，不进行未经文档确认可安全重试的自动重试，避免重复执行。
 - 为签名、参数转换和错误处理等关键逻辑编写测试；测试优先使用模拟服务，避免默认调用真实商家接口。
@@ -95,4 +101,8 @@ temu-sdk-go/
 
 类目属性查询 `bg.glo.goods.attrs.get` 按同名前缀 JSON 参数字典维护，模型放在 `temu/category/goods_attrs_get.go`；多语言字段使用动态 `map[string]string`，`productCreateTime` 为毫秒时间戳，`chooseAllQualifySpec` 按 BOOLEAN 保留 bool。已通过模型字典与模拟测试，尚未真实查询联调。
 
-创建规格 `bg.glo.goods.spec.create` 按用户截图维护（页面更新 2026-01-11 14:19:11），请求含必填 `parentSpecId`、`specName`，响应为 `result.specId`。暂沿用 PA 网关，网关和权限需真实接入时核验；写操作不自动重试，不假设名称可去重。
+创建规格 `bg.glo.goods.spec.create` 最初按截图实现，现以 PA 字典维护（页面更新 2026-01-11 14:19:11），请求含必填 `parentSpecId`、`specName`，响应为 `result.specId`。使用字典指定的 PA 网关，权限需真实接入时核验；写操作不自动重试，不假设名称可去重。
+
+新增 PA 类目及货品接口以 docs/API-docs/PA_Category_Product_APIs.md 为索引。可选布尔查询条件保留指针以发送 false；可选切片使用 omitzero 区分省略和空数组。无业务参数的方法只接收 context；所有方法不自动重试。旧 models 测试已迁移到新的 PA 字典目录，本地执行全量测试需要这些 docs 资料。
+
+调用示例必须按 examples/<业务域>/<完整接口名以下划线分词>/main.go 分组；修改目录时同步所有调用命令和源码错误提示。模型文件按接口末段词序命名，如 goods_add.go。旧结果名称保留兼容别名；不要仅为风格修改已公开字段的类型。商品列表可选切片与新接口统一使用 omitzero。

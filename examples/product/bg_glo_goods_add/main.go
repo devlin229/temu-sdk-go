@@ -27,7 +27,7 @@ func run() error {
 	appSecret := "ac0a3e952eaaa5b19c0e615c2ef497f50afa6e49"
 	accessToken := "ayzqiujmpkuyst6jpwschlfc6kgzaxhhd9aghi2hdujvia1grfkwvrsv"
 
-	request, err := loadRequest("product-request.json")
+	request, err := loadRequest("examples/product/bg_glo_goods_add/product-request.json")
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func run() error {
 			return errors.Join(publishErr, fmt.Errorf("编码发品响应: %w", err))
 		}
 		// 即使业务失败也保存完整响应，成功时其中包含商品及 SKC/SKU 编码映射。
-		if err = os.WriteFile("product-result.json", append(raw, '\n'), 0o600); err != nil {
+		if err = os.WriteFile("examples/product/bg_glo_goods_add/product-result.json", append(raw, '\n'), 0o600); err != nil {
 			return errors.Join(publishErr, fmt.Errorf("保存发品响应失败，请先核对平台记录: %w", err))
 		}
 		if _, err = fmt.Fprintln(os.Stdout, string(raw)); err != nil {

@@ -1,9 +1,10 @@
+// 参数来源：docs/Temu_PA_APIs/category/bg.glo.goods.spec.create/parameters.json
+// 页面更新时间：2026-01-11 14:19:11；导出日期：2026-11-12。
 package category
 
 import "github.com/devlin229/temu-sdk-go/temu/common"
 
 // BgGloGoodsSpecCreateRequest 是 bg.glo.goods.spec.create 的业务请求。
-// 来源：用户提供的官方页面截图，页面更新时间 2026-01-11 14:19:11。
 type BgGloGoodsSpecCreateRequest struct {
 	ParentSpecID int64  `json:"parentSpecId"` // 必填；父规格 ID
 	SpecName     string `json:"specName"`     // 必填；子规格名称

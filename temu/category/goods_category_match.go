@@ -1,3 +1,5 @@
+// 参数来源：docs/Temu_PA_APIs/category/bg.glo.goods.category.match/parameters.json
+// 页面更新时间：2026-04-29 22:27:22；导出日期：2026-11-12。
 package category
 
 import "github.com/devlin229/temu-sdk-go/temu/common"

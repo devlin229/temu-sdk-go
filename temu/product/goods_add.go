@@ -1,5 +1,5 @@
-// 参数来源：docs/API-json/bg.glo.goods.add.{request,response}.parameters.json
-
+// 参数来源：docs/Temu_PA_APIs/product/bg.glo.goods.add/parameters.json
+// 页面更新时间：2026-08-25 22:03:37；导出日期：2026-11-12。
 package product
 
 import "github.com/devlin229/temu-sdk-go/temu/common"
@@ -499,11 +499,11 @@ type ProductComplianceStatementRequest struct {
 // BgGloGoodsAddRespose 是 bg.glo.goods.add 的完整响应。
 type BgGloGoodsAddRespose struct {
 	common.Response
-	Result *Result `json:"result"` // result
+	Result *GoodsAddResult `json:"result"` // result
 }
 
-// Result result
-type Result struct {
+// GoodsAddResult result
+type GoodsAddResult struct {
 	ProductSKUList []ProductSKU `json:"productSkuList"` // SKU List
 	ProductID      int64        `json:"productId"`      // Product ID
 	ProductSKCList []ProductSKC `json:"productSkcList"` // SKC List
@@ -529,3 +529,7 @@ type SKUSpec struct {
 type ProductSKC struct {
 	ProductSKCID int64 `json:"productSkcId"` // skc id
 }
+
+// Result 保留原有类型名称，新的调用可使用 GoodsAddResult。
+// Deprecated: 使用 GoodsAddResult。
+type Result = GoodsAddResult

@@ -1,3 +1,5 @@
+// 参数来源：docs/Temu_PA_APIs/product/bg.glo.goods.list.get/parameters.json
+// 页面更新时间：2026-06-29 22:05:15；导出日期：2026-11-12。
 package product
 
 import "github.com/devlin229/temu-sdk-go/temu/common"
@@ -7,10 +9,10 @@ import "github.com/devlin229/temu-sdk-go/temu/common"
 type BgGloGoodsListGetRequest struct {
 	common.PageParams
 
-	ProductName   string  `json:"productName,omitempty"`   // 商品名称
-	ProductSKCIDs []int64 `json:"productSkcIds,omitempty"` // 商品 SKC ID 列表
-	SKCExtCode    string  `json:"skcExtCode,omitempty"`    // 商品 SKC 外部编码
-	BindSiteIDs   []int64 `json:"bindSiteIds,omitempty"`   // 经营站点 ID 列表
+	ProductName   string  `json:"productName,omitempty"`  // 商品名称
+	ProductSKCIDs []int64 `json:"productSkcIds,omitzero"` // 商品 SKC ID 列表
+	SKCExtCode    string  `json:"skcExtCode,omitempty"`   // 商品 SKC 外部编码
+	BindSiteIDs   []int64 `json:"bindSiteIds,omitzero"`   // 经营站点 ID 列表
 
 	// SKC 一级状态：0 未发布到站点，100 在售中，200 已下架/已终止，300 已删除。
 	SKCTopStatus             *int  `json:"skcTopStatus,omitempty"`
@@ -38,11 +40,11 @@ type BgGloGoodsListGetRequest struct {
 // BgGloGoodsListGetRespose 是商品列表接口的完整响应。
 type BgGloGoodsListGetRespose struct {
 	common.Response
-	Result *BgGloGoodsListGetResult `json:"result"`
+	Result *GoodsListResult `json:"result"`
 }
 
-// BgGloGoodsListGetResult 包含当前页数据与总数量。
-type BgGloGoodsListGetResult struct {
+// GoodsListResult 包含当前页数据与总数量。
+type GoodsListResult struct {
 	Data       []GoodsListItem `json:"data"`
 	TotalCount int64           `json:"totalCount"`
 }
@@ -221,3 +223,7 @@ type ProductCategories struct {
 	Cat10   *Category `json:"cat10"`
 	LeafCat *Category `json:"leafCat"`
 }
+
+// BgGloGoodsListGetResult 保留原有类型名称，新的调用可使用 GoodsListResult。
+// Deprecated: 使用 GoodsListResult。
+type BgGloGoodsListGetResult = GoodsListResult

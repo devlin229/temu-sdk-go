@@ -1,5 +1,5 @@
-// 参数来源：docs/API-json/bg.goods.image.upload.global.{request,response}.parameters.json
-
+// 参数来源：docs/Temu_PA_APIs/image/bg.goods.image.upload.global/parameters.json
+// 页面更新时间：2025-06-22 20:00:52；导出日期：2026-11-12。
 package image
 
 import "github.com/devlin229/temu-sdk-go/temu/common"
@@ -27,12 +27,16 @@ type Options struct {
 // BgGoodsImageUploadGlobalRespose 是 bg.goods.image.upload.global 的完整响应。
 type BgGoodsImageUploadGlobalRespose struct {
 	common.Response
-	Result *Result `json:"result"` // result
+	Result *ImageUploadResult `json:"result"` // result
 }
 
-// Result result
-type Result struct {
+// ImageUploadResult result
+type ImageUploadResult struct {
 	URLs     []string `json:"urls"`     // -
 	ImageURL string   `json:"imageUrl"` // -
 	URL      string   `json:"url"`      // -
 }
+
+// Result 保留原有类型名称，新的调用可使用 ImageUploadResult。
+// Deprecated: 使用 ImageUploadResult。
+type Result = ImageUploadResult

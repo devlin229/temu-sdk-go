@@ -30,7 +30,7 @@ func run() error {
 	var langList []string         // 可选；一般不传，多语言查询影响性能。
 
 	if catID <= 0 {
-		return errors.New("请先在 examples/attrs_get/main.go 中填写真实叶子类目 catID")
+		return errors.New("请先在 examples/category/bg_glo_goods_attrs_get/main.go 中填写真实叶子类目 catID")
 	}
 	client := temu.NewClient(appKey, appSecret, accessToken)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -44,7 +44,7 @@ func run() error {
 		if err != nil {
 			return errors.Join(queryErr, fmt.Errorf("编码类目属性响应: %w", err))
 		}
-		if err = os.WriteFile("attrs-get-result.json", append(raw, '\n'), 0o600); err != nil {
+		if err = os.WriteFile("examples/category/bg_glo_goods_attrs_get/attrs-get-result.json", append(raw, '\n'), 0o600); err != nil {
 			return errors.Join(queryErr, fmt.Errorf("保存类目属性响应: %w", err))
 		}
 		if _, err = fmt.Fprintln(os.Stdout, string(raw)); err != nil {
