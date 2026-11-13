@@ -19,6 +19,7 @@ examples/
 ├── category/ # 类目、属性、规格及类目纠正，11 个接口
 ├── product/  # 商品、仓库、运费、搬运及生命周期，11 个接口
 ├── image/    # 图片上传，1 个接口
+├── jit/      # JIT 操作，1 个接口
 ├── config/   # 公共凭据加载
 └── .env.example # 空配置模板
 ```
@@ -46,6 +47,7 @@ go run ./examples/image/bg_goods_image_upload_global
 | category | `bg.goods.attribute.mapping.global` | 内外属性映射 | `examples/category/bg_goods_attribute_mapping_global` |
 | category | `bg.goods.redress.correctrecord.query` | 查询商品类目纠正列表 | `examples/category/bg_goods_redress_correctrecord_query` |
 | category | `bg.goods.redress.optionalcategory.correct` | 纠正商品类目 | `examples/category/bg_goods_redress_optionalcategory_correct` |
+| jit | `bg.glo.jitmode.activate` | JIT 操作 | `examples/jit/bg_glo_jitmode_activate` |
 | image | `bg.goods.image.upload.global` | bas64图片上传-global | `examples/image/bg_goods_image_upload_global` |
 | product | `bg.btg.goods.stock.warehouse.list.get` | 根据站点查询可绑定的发货仓库信息接口 | `examples/product/bg_btg_goods_stock_warehouse_list_get` |
 | product | `bg.glo.best.seller.invitation.query` | best seller招标单查询 | `examples/product/bg_glo_best_seller_invitation_query` |
@@ -63,7 +65,7 @@ go run ./examples/image/bg_goods_image_upload_global
 
 ## 公共凭据配置
 
-全部 23 个接口示例调用 examples/config.LoadCredentials()，按字段优先使用系统环境变量：
+全部 24 个接口示例调用 examples/config.LoadCredentials()，按字段优先使用系统环境变量：
 
 ```dotenv
 TEMU_APP_KEY=
@@ -85,7 +87,7 @@ cp -n examples/.env.example examples/.env
 
 ## 可分享的请求模板
 
-21 个含业务参数的接口各提供 request.example.json。商品发布模板按用户授权复制其成功上架的单款请求；其余模板来自本地 PA 字段结构。全部模板不含公共鉴权凭据。父规格列表、爆款售罄查询没有业务参数，不创建空请求模板。
+22 个含业务参数的接口各提供 request.example.json。商品发布模板按用户授权复制其成功上架的单款请求；其余模板来自本地 PA 字段结构。全部模板不含公共鉴权凭据。父规格列表、爆款售罄查询没有业务参数，不创建空请求模板。
 
 除商品发布成功案例外，其他模板中的空字符串、0、false 和单元素数组只是类型占位，并非合法业务值或默认值。复制后按真实业务填写必填和条件必填项，删去不使用的可选字段；模板本身不自动发送。
 
@@ -115,3 +117,5 @@ cp -n examples/category/bg_glo_goods_accessories_get/request.example.json exampl
 # 编辑 request.json，填写业务值或按需要使用 {}
 go run ./examples/category/bg_glo_goods_accessories_get
 ```
+
+JIT 示例运行 `go run ./examples/jit/bg_glo_jitmode_activate`；先复制同目录 request.example.json 为 request.json 并填写真实货品和 SKC ID。该命令会提交 JIT 写操作，不自动重试。

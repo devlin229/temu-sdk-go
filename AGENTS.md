@@ -2,7 +2,7 @@
 
 `temu-tool` 是使用 Go 开发的 Temu 接口对接工具，用于辅助商家执行商品管理等日常操作。具体功能以实际接入的 Temu 官方接口和业务需求为准。
 
-当前已实现公共签名与 HTTP 客户端、图片上传，以及 docs/Temu_PA_APIs/category 和 product 中全部 22 个接口的 SDK 方法与明确模型。图片上传已由用户反馈成功；PA 类目及货品接口通过本地契约与模拟测试；用户已反馈单款娃娃商品发布成功，其余接口不因此视为完成真实联调。商品发布方法不自动查询或校验类目模板和商家模式，成功不代表审核通过或可售。
+当前已实现公共签名与 HTTP 客户端、图片上传、JIT 操作，以及 docs/Temu_PA_APIs/category 和 product 中全部 22 个接口的 SDK 方法与明确模型。图片上传已由用户反馈成功；PA 类目及货品接口通过本地契约与模拟测试；用户已反馈单款娃娃商品发布成功，其余接口不因此视为完成真实联调。商品发布方法不自动查询或校验类目模板和商家模式，成功不代表审核通过或可售。
 
 ## 项目目录
 
@@ -14,6 +14,8 @@ temu-sdk-go/
 ├── temu/       # 公共客户端、签名与公共参数/响应
 │   ├── common/response.go # 各接口共用的响应状态字段
 │   ├── common/params.go # 各接口共用的分页参数
+│   ├── jit.go # JIT 操作 SDK 方法
+│   ├── jit/jitmode_activate.go # JIT 操作请求及响应模型
 │   ├── image.go # 图片上传 SDK 方法
 │   ├── product.go # PA 货品域 11 个 SDK 方法
 │   ├── category.go # PA 类目域 11 个 SDK 方法
@@ -36,6 +38,7 @@ temu-sdk-go/
 │   ├── category/ # 11 个类目域示例，子目录为完整接口名替换点为下划线
 │   ├── product/  # 11 个货品域示例，保留商品发布数据准备流程
 │   ├── image/    # 图片上传示例
+│   ├── jit/      # JIT 操作示例，凭据统一加载并读取 request.json
 │   ├── config/   # 公共凭据加载：环境变量优先、examples/.env 回退
 │   ├── go.mod    # 独立示例模块，主 SDK 下载时排除整个 examples
 │   ├── tests/config/ # 示例公共配置与请求读取测试
@@ -119,3 +122,5 @@ temu-sdk-go/
 商品发布 request.example.json 按用户明确授权与其成功上架的 product-request.json 同步，属于业务案例模板例外（仍不含公共鉴权凭据）；其他接口模板继续使用结构占位值。发品缺本地文件时从该模板生成，不再维护重复的虚构双款 makeRequest 数据。
 
 examples 是独立 Go Module（同路径子模块），通过 examples/go.mod 的本地 replace 使用根 SDK；主模块不得依赖示例模块。go.work 仅用于本地开发并忽略，不提交。克隆仓库后在根目录运行 go work init . ./examples，随后可从根目录运行既有示例命令。验证发布隔离时用 GOWORK=off go test ./...、GOWORK=off go vet ./...；开发环境对两个模块执行 go test ./... ./examples/...、go vet ./... ./examples/...。README 仅保留接口分类、安装和基本用法，开发发布细节放独立文档。
+
+JIT 接口模型放 temu/jit/，调用方法放 temu/jit.go。bg.glo.jitmode.activate 当前字典只有必填 productId、productSkcId；result 是未展开 OBJECT。不要根据“开通/关闭”简介猜测开关字段或反转行为，不自动重试。
