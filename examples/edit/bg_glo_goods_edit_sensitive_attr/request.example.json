@@ -1,0 +1,28 @@
+{
+  "productId": 0,
+  "skuReqList": [
+    {
+      "productSkuSensitiveLimitReq": {
+        "maxBatteryCapacityHp": 0,
+        "maxBatteryCapacity": 0,
+        "maxLiquidCapacity": 0,
+        "maxLiquidCapacityHp": 0,
+        "maxKnifeLength": 0,
+        "maxKnifeLengthHp": 0,
+        "knifeTipAngle": {
+          "degrees": 0
+        }
+      },
+      "productSkuId": 0,
+      "productSkuSensitiveAttrReq": {
+        "sensitiveTypes": [
+          0
+        ],
+        "isSensitive": 0,
+        "sensitiveList": [
+          0
+        ]
+      }
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 `temu-tool` 是使用 Go 开发的 Temu 接口对接工具，用于辅助商家执行商品管理等日常操作。具体功能以实际接入的 Temu 官方接口和业务需求为准。
 
-当前已实现公共签名与 HTTP 客户端、图片上传、JIT 操作，以及 docs/Temu_PA_APIs/category 和 product 中全部 22 个接口的 SDK 方法与明确模型。图片上传已由用户反馈成功；PA 类目及货品接口通过本地契约与模拟测试；用户已反馈单款娃娃商品发布成功，其余接口不因此视为完成真实联调。商品发布方法不自动查询或校验类目模板和商家模式，成功不代表审核通过或可售。
+当前已实现公共签名与 HTTP 客户端、图片上传、JIT 操作、edit 目录全部 8 个编辑接口，以及 docs/Temu_PA_APIs/category 和 product 中全部 22 个接口的 SDK 方法与明确模型。图片上传已由用户反馈成功；PA 类目及货品接口通过本地契约与模拟测试；用户已反馈单款娃娃商品发布成功，其余接口不因此视为完成真实联调。商品发布方法不自动查询或校验类目模板和商家模式，成功不代表审核通过或可售。
 
 ## 项目目录
 
@@ -14,6 +14,8 @@ temu-sdk-go/
 ├── temu/       # 公共客户端、签名与公共参数/响应
 │   ├── common/response.go # 各接口共用的响应状态字段
 │   ├── common/params.go # 各接口共用的分页参数
+│   ├── edit.go # PA 编辑域 8 个 SDK 方法
+│   ├── edit/ # 编辑请求/响应与共享嵌套模型，保留素材 null 和清空语义
 │   ├── jit.go # JIT 操作 SDK 方法
 │   ├── jit/jitmode_activate.go # JIT 操作请求及响应模型
 │   ├── image.go # 图片上传 SDK 方法
@@ -37,6 +39,7 @@ temu-sdk-go/
 ├── examples/
 │   ├── category/ # 11 个类目域示例，子目录为完整接口名替换点为下划线
 │   ├── product/  # 11 个货品域示例，保留商品发布数据准备流程
+│   ├── edit/     # 8 个编辑域示例，读取同目录 request.json
 │   ├── image/    # 图片上传示例
 │   ├── jit/      # JIT 操作示例，凭据统一加载并读取 request.json
 │   ├── config/   # 公共凭据加载：环境变量优先、examples/.env 回退
@@ -50,6 +53,8 @@ temu-sdk-go/
     ├── Temu_PA_APIs/                  # PA 请求/响应模板与参数字典
     └── API-docs/                      # Temu 接口接入文档
         ├── PA_Category_Product_APIs.md # 22 个接口的接入清单与验证边界
+        ├── Temu_Edit_APIs.md # 8 个编辑接口索引与调用边界
+        ├── pa/edit/、pa/jit/ # 编辑及 JIT 逐接口来源、权限、字段与示例
         ├── pa/category/、pa/product/   # 逐接口的来源、权限、字段、错误码及示例
         ├── Temu_Developer_Guide.md     # 网关、授权、公共参数、签名与通用排错
         ├── Temu_Product_Publish_API.md # 商品发布参数、业务约束、响应与错误码
@@ -79,6 +84,9 @@ temu-sdk-go/
 - 接口模型都是普通 SDK 源码，可直接维护；字段契约以 `docs/Temu_PA_APIs/<领域>/<type>/parameters.json` 为准，并由 `tests/models/` 对照字典逐层验证。`scripts/generate_api_models.py` 仅为参数转换辅助工具，必须用 `--output-dir` 指定输出目录，建议输出至临时目录供人工对照。业务校验和调用逻辑维护在独立文件中。
 - 类目搜索最初按截图维护，现以 PA 参数字典为契约；保留 JSON 名称 `categoryPathDTOS`，网关与权限见对应字典，真实接入仍需验证授权。
 - 父规格查询按用户提供的截图维护，响应 JSON 名称保留 `parentSpecDTOS`，模型放在 `temu/category/`；没有业务参数的方法只接收 context，不创建多余的空 Request 类型。
+
+- 编辑域方法使用 `temu/edit/` 模型，`goods.update` 当前仅用于产地修改；修改单申请返回逐项失败信息和 UID 映射，不自动串联提交或猜测 taskVersion。
+- 素材接口视频/多语言图片列表使用切片指针区分省略、null（不修改）、[]（删除）；floorId 使用双层指针保留 null 新建楼层语义。JSON 解码须保留这些状态，不能因省略策略丢失清空/新建语义。
 
 ## 代码规范
 

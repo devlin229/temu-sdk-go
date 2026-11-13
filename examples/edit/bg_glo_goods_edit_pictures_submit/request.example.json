@@ -1,0 +1,91 @@
+{
+  "productCarouseVideoReqList": [
+    {
+      "vid": "",
+      "coverUrl": "",
+      "videoUrl": "",
+      "width": 0,
+      "height": 0
+    }
+  ],
+  "skcList": [
+    {
+      "skcId": 0,
+      "skuCommonReqList": [
+        {
+          "productSkuThumbUrlI18nReqs": [
+            {
+              "imgUrlList": [
+                ""
+              ],
+              "language": ""
+            }
+          ],
+          "thumbUrl": "",
+          "skuId": 0
+        }
+      ],
+      "previewImgUrls": [
+        ""
+      ],
+      "productSkcCarouselImageI18nReqs": [
+        {
+          "imgUrlList": [
+            ""
+          ],
+          "language": ""
+        }
+      ],
+      "colorImageUrl": ""
+    }
+  ],
+  "productId": 0,
+  "productDetailVideoReqList": [
+    {
+      "vid": "",
+      "coverUrl": "",
+      "videoUrl": "",
+      "width": 0,
+      "height": 0
+    }
+  ],
+  "goodsLayerDecorationReqs": [
+    {
+      "floorId": 0,
+      "type": "",
+      "priority": 0,
+      "lang": "",
+      "contentList": [
+        {
+          "imgUrl": "",
+          "textModuleDetails": {
+            "backgroundColor": "",
+            "fontFamily": 0,
+            "fontSize": 0,
+            "align": "",
+            "fontColor": ""
+          },
+          "width": 0,
+          "text": "",
+          "height": 0
+        }
+      ],
+      "key": ""
+    }
+  ],
+  "carouselImageUrls": [
+    ""
+  ],
+  "carouselImageI18nReqs": [
+    {
+      "imgUrlList": [
+        ""
+      ],
+      "language": ""
+    }
+  ],
+  "materialImgUrl": "",
+  "materialMultiLanguages": [
+    ""
+  ]
+}
