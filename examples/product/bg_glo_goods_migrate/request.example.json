@@ -1,0 +1,59 @@
+{
+  "migrationList": [
+    {
+      "productSemiManagedReq": {
+        "bindSiteIds": [
+          0
+        ],
+        "semiManagedSiteMode": 0
+      },
+      "productWarehouseRouteReq": {
+        "targetRouteList": [
+          {
+            "siteIdList": [
+              0
+            ],
+            "warehouseId": ""
+          }
+        ]
+      },
+      "skcDetails": [
+        {
+          "skuDetails": [
+            {
+              "currencyType": "",
+              "specList": [
+                {
+                  "specId": 0,
+                  "parentSpecName": "",
+                  "parentSpecId": 0,
+                  "specName": ""
+                }
+              ],
+              "siteSupplierPrices": [
+                {
+                  "siteId": 0,
+                  "supplierPrice": 0
+                }
+              ]
+            }
+          ],
+          "specList": [
+            {
+              "specId": 0,
+              "parentSpecName": "",
+              "parentSpecId": 0,
+              "specName": ""
+            }
+          ]
+        }
+      ],
+      "sourceProductId": 0,
+      "productShipmentReq": {
+        "freightTemplateId": "",
+        "shipmentLimitSecond": 0
+      },
+      "warehouseSkuStockAvailable": 0
+    }
+  ]
+}

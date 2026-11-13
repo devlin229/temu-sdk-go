@@ -36,6 +36,8 @@ temu-sdk-go/
 │   ├── category/ # 11 个类目域示例，子目录为完整接口名替换点为下划线
 │   ├── product/  # 11 个货品域示例，保留商品发布数据准备流程
 │   ├── image/    # 图片上传示例
+│   ├── config/   # 公共凭据加载：环境变量优先、examples/.env 回退
+│   ├── .env.example # 可提交的空配置模板
 │   └── README.md # 示例索引与执行方式
 ├── scripts/generate_api_models.py # 参数转换辅助工具，结果输出到指定目录供人工对照
 └── docs/
@@ -83,6 +85,7 @@ temu-sdk-go/
 - 保持函数职责清晰，避免不必要的抽象和重复代码；注释优先使用中文，说明业务规则、约束或实现原因。
 - 显式处理错误，补充必要的操作上下文，包装错误时使用 `%w`；不要忽略错误或用 `panic` 处理常规业务失败。
 - 网络调用接收 `context.Context`，设置合理的超时，及时关闭响应体，并分别处理 HTTP 错误和 Temu 业务错误。
+- 已收到平台响应但 HTTP 状态异常、正文读取或模型解析失败时，使用 `ResponseError` 保留接口 type、状态码和原始正文；读取中断也保留已收到的部分，底层原因通过 Unwrap 暴露。不得只保留自定义错误文本而丢弃平台正文。正常业务失败继续返回接口响应与 BusinessError，不补造响应，不自动重试。
 - 请求与响应优先使用明确的结构体及 `json` 标签；字段类型、必填条件和签名规则以官方文档为准，不猜测接口契约。
 - SDK 方法名由接口 `type` 按点分词转为大驼峰，例如 `bg.goods.image.upload.global` 对应 `BgGoodsImageUploadGlobal`；请求、响应入口结构体统一命名为“方法名 + Request”和“方法名 + Respose”（按约定使用 Respose 拼写）。
 - 嵌套结构体按字段含义命名，例如图片上传的 `Options`、`Result`，不机械追加完整方法名前缀；仅在同包确实有名称冲突时添加必要的业务限定。
@@ -91,7 +94,7 @@ temu-sdk-go/
 - 鉴权、签名和公共请求逻辑集中封装；商家业务逻辑与底层 HTTP 调用分开。
 - 共用参数类型统一维护在 `temu/common/params.go`，业务模型直接引用 common 包，不在 temu 根包保留参数类型别名或重复的 params.go。
 - Cookie、Token、App Secret 等凭据通过环境变量或本地配置提供，不硬编码、不提交到仓库、不写入日志；日志中的敏感字段必须脱敏。
-- 本地测试例外：按用户明确要求，示例直接使用 `appKey`、`appSecret`、`accessToken` 等字符串，不读取环境变量或命令行参数；仓库中的凭据示例值保持为空。`examples/product/bg_glo_goods_add/` 的两款娃娃业务参数按用户授权使用虚构测试值，不将这些值描述为真实类目、规格或已核实的商品参数。
+- 示例凭据统一调用 `examples/config.LoadCredentials()`：优先读取 `TEMU_APP_KEY`、`TEMU_APP_SECRET`、`TEMU_ACCESS_TOKEN` 系统环境变量，缺失字段从 `examples/.env` 补齐，仍缺失则报错。不得在各示例硬编码或重复读取凭据；`.env` 不提交，`.env.example` 只保留空占位。`examples/product/bg_glo_goods_add/` 的两款娃娃业务参数按用户授权使用虚构测试值，不将这些值描述为真实类目、规格或已核实的商品参数。
 - 按用户明确要求，当前命令行调试例外：发送前将请求方法、URL、请求头和已签名请求参数原样输出到 stderr，不脱敏（含 access_token、app_key、sign 及图片签名链接）。app_secret 不属于请求参数，仍不输出；结果 JSON 独立输出到 stdout。
 - 对新增、修改、删除商品等写入操作，不进行未经文档确认可安全重试的自动重试，避免重复执行。
 - 为签名、参数转换和错误处理等关键逻辑编写测试；测试优先使用模拟服务，避免默认调用真实商家接口。
@@ -106,3 +109,5 @@ temu-sdk-go/
 新增 PA 类目及货品接口以 docs/API-docs/PA_Category_Product_APIs.md 为索引。可选布尔查询条件保留指针以发送 false；可选切片使用 omitzero 区分省略和空数组。无业务参数的方法只接收 context；所有方法不自动重试。旧 models 测试已迁移到新的 PA 字典目录，本地执行全量测试需要这些 docs 资料。
 
 调用示例必须按 examples/<业务域>/<完整接口名以下划线分词>/main.go 分组；修改目录时同步所有调用命令和源码错误提示。模型文件按接口末段词序命名，如 goods_add.go。旧结果名称保留兼容别名；不要仅为风格修改已公开字段的类型。商品列表可选切片与新接口统一使用 omitzero。
+
+可分享的业务请求模板统一命名为 request.example.json，允许通过 .gitignore 白名单提交。模板仅含业务字段和结构占位值，不含公共凭据或真实商家数据；没有业务参数的接口不创建空模板。模板不自动参与真实调用，说明中须按示例实际取参方式指导填写；本地请求和结果 JSON 继续忽略，不覆盖已有请求。

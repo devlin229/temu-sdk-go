@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -39,15 +40,6 @@ func NewClient(appKey, appSecret, accessToken string) *Temu {
 		}
 	})
 	return instance
-}
-
-// request 的 gateway 和 apiType 由各业务方法指定，调用方不需要区分 CN/PA。
-func (t *Temu) request(ctx context.Context, gateway, apiType string, params any) (*Response, error) {
-	var result Response
-	if err := t.requestInto(ctx, gateway, apiType, params, &result); err != nil {
-		return nil, err
-	}
-	return &result, nil
 }
 
 // requestInto 复用签名与 HTTP 流程，直接解码到各接口的响应类型。
@@ -97,13 +89,24 @@ func (t *Temu) requestInto(ctx context.Context, gateway, apiType string, params,
 		return fmt.Errorf("调用 %s: %w", apiType, err)
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("调用 %s 返回 HTTP %d", apiType, resp.StatusCode)
+	// 先保留原始正文，HTTP 错误或模型解析失败时调用方仍能获取平台实际返回。
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return &ResponseError{
+			APIType: apiType, StatusCode: resp.StatusCode, Body: responseBody,
+			Err: fmt.Errorf("读取响应正文: %w", err),
+		}
 	}
-	decoder := json.NewDecoder(resp.Body)
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return &ResponseError{APIType: apiType, StatusCode: resp.StatusCode, Body: responseBody}
+	}
+	decoder := json.NewDecoder(bytes.NewReader(responseBody))
 	decoder.UseNumber()
 	if err = decoder.Decode(result); err != nil {
-		return fmt.Errorf("解析 %s 响应: %w", apiType, err)
+		return &ResponseError{
+			APIType: apiType, StatusCode: resp.StatusCode, Body: responseBody,
+			Err: fmt.Errorf("解析响应: %w", err),
+		}
 	}
 	return nil
 }

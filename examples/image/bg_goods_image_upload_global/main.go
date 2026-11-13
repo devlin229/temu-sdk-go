@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/devlin229/temu-sdk-go/examples/config"
 	"github.com/devlin229/temu-sdk-go/temu"
 	"github.com/devlin229/temu-sdk-go/temu/image"
 )
@@ -21,11 +22,13 @@ func main() {
 	}
 }
 
+// 业务字段结构参考同目录 request.example.json；占位值需替换，不能直接发起真实业务。
 func run() error {
-	// 本地测试时直接填写凭据和图片路径。
-	appKey := "47bb4bb7769e12d9f7aa93cf029fe529"
-	appSecret := "ac0a3e952eaaa5b19c0e615c2ef497f50afa6e49"
-	accessToken := "ayzqiujmpkuyst6jpwschlfc6kgzaxhhd9aghi2hdujvia1grfkwvrsv"
+	// 凭据统一加载，图片路径在下方填写。
+	credentials, err := config.LoadCredentials()
+	if err != nil {
+		return err
+	}
 	imagePath := "/Users/j/workspace/bjd/c4f/O1CN01YJs6gG1dXGOBB1Sln_!!4611686018427384145-0-item_pic.jpg_.webp"
 
 	content, err := os.ReadFile(imagePath)
@@ -38,7 +41,7 @@ func run() error {
 	// 外包装图片可设置 ImageBizType = bizType，其中 bizType := int64(1)。
 	// 图片处理选项按需设置 request.Options = &image.Options{...}。
 
-	client := temu.NewClient(appKey, appSecret, accessToken)
+	client := temu.NewClient(credentials.AppKey, credentials.AppSecret, credentials.AccessToken)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	response, uploadErr := client.BgGoodsImageUploadGlobal(ctx, request)

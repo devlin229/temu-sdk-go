@@ -9,12 +9,10 @@
 *.test
 coverage.out
 /image-base64.txt
-/examples/product/bg_glo_goods_add/product-request.json
-/examples/product/bg_glo_goods_add/product-result.json
-/examples/category/bg_glo_goods_category_match/category-match-result.json
-/examples/category/bg_glo_goods_parentspec_get/parentspec-result.json
-/examples/category/bg_glo_goods_attrs_get/attrs-get-result.json
-/examples/category/bg_glo_goods_spec_create/spec-create-result.json
+
+# 示例目录下的请求、响应及调试 JSON
+/examples/**/*.json
+!/examples/**/request.example.json
 
 # 编辑器及系统文件
 .idea/
@@ -25,20 +23,3 @@ coverage.out
 scripts
 tests
 docs
-/examples/category/bg_glo_goods_accessories_get/bg_glo_goods_accessories_get-result.json
-/examples/category/bg_glo_goods_cats_get/bg_glo_goods_cats_get-result.json
-/examples/category/bg_glo_goods_catsmandatory_get/bg_glo_goods_catsmandatory_get-result.json
-/examples/category/bg_glo_oem_page_list/bg_glo_oem_page_list-result.json
-/examples/category/bg_goods_attribute_mapping_global/bg_goods_attribute_mapping_global-result.json
-/examples/category/bg_goods_redress_correctrecord_query/bg_goods_redress_correctrecord_query-result.json
-/examples/category/bg_goods_redress_optionalcategory_correct/bg_goods_redress_optionalcategory_correct-result.json
-/examples/product/bg_btg_goods_stock_warehouse_list_get/bg_btg_goods_stock_warehouse_list_get-result.json
-/examples/product/bg_glo_best_seller_invitation_query/bg_glo_best_seller_invitation_query-result.json
-/examples/product/bg_glo_goods_brand_get/bg_glo_goods_brand_get-result.json
-/examples/product/bg_glo_goods_detail_get/bg_glo_goods_detail_get-result.json
-/examples/product/bg_glo_goods_list_get/bg_glo_goods_list_get-result.json
-/examples/product/bg_glo_goods_migrate/bg_glo_goods_migrate-result.json
-/examples/product/bg_glo_goods_removed_get/bg_glo_goods_removed_get-result.json
-/examples/product/bg_glo_goods_topselling_soldout_get/bg_glo_goods_topselling_soldout_get-result.json
-/examples/product/bg_glo_logistics_template_get/bg_glo_logistics_template_get-result.json
-/examples/product/bg_glo_product_search/bg_glo_product_search-result.json

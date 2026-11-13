@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/devlin229/temu-sdk-go/examples/config"
 	"github.com/devlin229/temu-sdk-go/temu"
 	"github.com/devlin229/temu-sdk-go/temu/category"
 )
@@ -19,14 +20,16 @@ func main() {
 	}
 }
 
+// 业务字段结构参考同目录 request.example.json；占位值需替换，不能直接发起真实业务。
 func run() error {
-	// 直接填写字符串，不读取环境变量或命令行参数。
-	appKey := "47bb4bb7769e12d9f7aa93cf029fe529"
-	appSecret := "ac0a3e952eaaa5b19c0e615c2ef497f50afa6e49"
-	accessToken := "ayzqiujmpkuyst6jpwschlfc6kgzaxhhd9aghi2hdujvia1grfkwvrsv"
+	// 凭据统一从系统环境变量或 examples/.env 获取。
+	credentials, err := config.LoadCredentials()
+	if err != nil {
+		return err
+	}
 	siteID := int64(0) // 可选，不按站点筛选时保持 0，SDK 会省略。
 
-	client := temu.NewClient(appKey, appSecret, accessToken)
+	client := temu.NewClient(credentials.AppKey, credentials.AppSecret, credentials.AccessToken)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	response, queryErr := client.BgGloGoodsCategoryMatch(ctx, &category.BgGloGoodsCategoryMatchRequest{

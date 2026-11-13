@@ -1,0 +1,21 @@
+{
+  "productPropertyReqs": [
+    {
+      "vid": 0,
+      "valueUnit": "",
+      "pid": 0,
+      "templatePid": 0,
+      "numberInputValue": "",
+      "propValue": "",
+      "propName": "",
+      "refPid": 0
+    }
+  ],
+  "bindSiteIds": [
+    0
+  ],
+  "configItems": [
+    0
+  ],
+  "leafCatId": 0
+}

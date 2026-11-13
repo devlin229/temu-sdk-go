@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/devlin229/temu-sdk-go/examples/config"
 	"github.com/devlin229/temu-sdk-go/temu"
 )
 
@@ -19,14 +20,12 @@ func main() {
 }
 
 func run() error {
-	// 本地测试直接填写，凭据保持为空；运行前核对接口是否为写操作。
-	appKey := ""
-	appSecret := ""
-	accessToken := ""
-	if appKey == "" || appSecret == "" || accessToken == "" {
-		return errors.New("请先填写 appKey、appSecret、accessToken")
+	// 凭据统一从系统环境变量或 examples/.env 获取；运行前核对是否为写操作。
+	credentials, err := config.LoadCredentials()
+	if err != nil {
+		return err
 	}
-	client := temu.NewClient(appKey, appSecret, accessToken)
+	client := temu.NewClient(credentials.AppKey, credentials.AppSecret, credentials.AccessToken)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	response, callErr := client.BgGloGoodsTopsellingSoldoutGet(ctx)

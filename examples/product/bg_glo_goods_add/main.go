@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/devlin229/temu-sdk-go/examples/config"
 	"github.com/devlin229/temu-sdk-go/temu"
 	"github.com/devlin229/temu-sdk-go/temu/product"
 )
@@ -21,17 +22,19 @@ func main() {
 	}
 }
 
+// 业务字段结构参考同目录 request.example.json；占位值需替换，不能直接发起真实业务。
 func run() error {
-	// 直接填写字符串；填写后运行此示例将真实调用商品发布接口。
-	appKey := "47bb4bb7769e12d9f7aa93cf029fe529"
-	appSecret := "ac0a3e952eaaa5b19c0e615c2ef497f50afa6e49"
-	accessToken := "ayzqiujmpkuyst6jpwschlfc6kgzaxhhd9aghi2hdujvia1grfkwvrsv"
+	// 凭据统一加载；运行此示例将真实调用商品发布接口。
+	credentials, err := config.LoadCredentials()
+	if err != nil {
+		return err
+	}
 
 	request, err := loadRequest("examples/product/bg_glo_goods_add/product-request.json")
 	if err != nil {
 		return err
 	}
-	client := temu.NewClient(appKey, appSecret, accessToken)
+	client := temu.NewClient(credentials.AppKey, credentials.AppSecret, credentials.AccessToken)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	response, publishErr := client.BgGloGoodsAdd(ctx, request)
@@ -122,8 +125,8 @@ func makeRequest() *product.BgGloGoodsAddRequest {
 		price  int64
 		weight int64
 	}{
-		{"GRAY-BLUE", "灰蓝上衣款", 20001, 50011, 7780, 180000},
-		{"BURGUNDY", "酒红上衣款", 20002, 50012, 7980, 190000},
+		{"GRAY-BLUE", "灰蓝上衣款", 20001, 50011, 1, 180000},
+		{"BURGUNDY", "酒红上衣款", 20002, 50012, 1, 190000},
 	}
 	for _, variant := range variants {
 		request.ProductSpecPropertyReqs = append(request.ProductSpecPropertyReqs, product.ProductSpecPropertyRequest{

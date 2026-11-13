@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/devlin229/temu-sdk-go/examples/config"
 	"github.com/devlin229/temu-sdk-go/temu"
 	"github.com/devlin229/temu-sdk-go/temu/category"
 )
@@ -20,13 +21,12 @@ func main() {
 	}
 }
 
+// 业务字段结构参考同目录 request.example.json；占位值需替换，不能直接发起真实业务。
 func run() error {
-	// 本地测试直接填写，凭据保持为空；运行前核对接口是否为写操作。
-	appKey := ""
-	appSecret := ""
-	accessToken := ""
-	if appKey == "" || appSecret == "" || accessToken == "" {
-		return errors.New("请先填写 appKey、appSecret、accessToken")
+	// 凭据统一从系统环境变量或 examples/.env 获取；运行前核对是否为写操作。
+	credentials, err := config.LoadCredentials()
+	if err != nil {
+		return err
 	}
 	// 填写真实业务 JSON，字段见 docs/Temu_PA_APIs/category/bg.glo.goods.catsmandatory.get/parameters.json。
 	requestJSON := ""
@@ -39,7 +39,7 @@ func run() error {
 	if err := decoder.Decode(&request); err != nil {
 		return fmt.Errorf("解析业务参数: %w", err)
 	}
-	client := temu.NewClient(appKey, appSecret, accessToken)
+	client := temu.NewClient(credentials.AppKey, credentials.AppSecret, credentials.AccessToken)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	response, callErr := client.BgGloGoodsCatsmandatoryGet(ctx, &request)
