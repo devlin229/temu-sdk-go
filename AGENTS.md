@@ -12,6 +12,7 @@ temu-sdk-go/
 ├── go.mod      # Go 模块与依赖声明
 ├── README.md   # 配置、运行与接口扩展说明
 ├── temu/       # 公共客户端、签名与公共参数/响应
+│   ├── dictionary/ # 官方结构化快照、来源及查询；data/ 随 SDK 嵌入
 │   ├── common/response.go # 各接口共用的响应状态字段
 │   ├── common/params.go # 各接口共用的分页参数
 │   ├── edit.go # PA 编辑域 8 个 SDK 方法
@@ -28,6 +29,7 @@ temu-sdk-go/
 │   │   ├── goods_parentspec_get.go # 父规格查询响应模型，无业务请求参数
 │   │   └── 其他模型文件 # 子类目、必填信息、包装清单、OEM、属性映射及类目纠正
 │   ├── product/
+│   │   ├── dictionary_check.go # 可选发品字典预检查，不改变 HTTP 调用
 │   │   ├── goods_add.go      # 商品发布请求、响应及嵌套模型
 │   │   ├── goods_list_get.go # 商品列表请求、响应及嵌套模型
 │   │   └── 其他模型文件 # 品牌、详情、搬运、仓库、招标单、废弃/售罄、运费及生命周期
@@ -50,8 +52,10 @@ temu-sdk-go/
 ├── scripts/generate_api_models.py # 参数转换辅助工具，结果输出到指定目录供人工对照
 └── docs/
     ├── product-publish.md             # 商品发布使用说明与验证边界
+    ├── data-dictionaries/ # 官方数据字典完整归档，含原文与来源
     ├── Temu_PA_APIs/                  # PA 请求/响应模板与参数字典
     └── API-docs/                      # Temu 接口接入文档
+        ├── Temu_Data_Dictionaries.md # 保留清单、加载和可选预检查
         ├── PA_Category_Product_APIs.md # 22 个接口的接入清单与验证边界
         ├── Temu_Edit_APIs.md # 8 个编辑接口索引与调用边界
         ├── pa/edit/、pa/jit/ # 编辑及 JIT 逐接口来源、权限、字段与示例
@@ -133,3 +137,5 @@ temu-sdk-go/
 examples 是独立 Go Module（同路径子模块），通过 examples/go.mod 的本地 replace 使用根 SDK；主模块不得依赖示例模块。go.work 仅用于本地开发并忽略，不提交。克隆仓库后在根目录运行 go work init . ./examples，随后可从根目录运行既有示例命令。验证发布隔离时用 GOWORK=off go test ./...、GOWORK=off go vet ./...；开发环境对两个模块执行 go test ./... ./examples/...、go vet ./... ./examples/...。README 仅保留接口分类、安装和基本用法，开发发布细节放独立文档。
 
 JIT 接口模型放 temu/jit/，调用方法放 temu/jit.go。bg.glo.jitmode.activate 当前字典只有必填 productId、productSkcId；result 是未展开 OBJECT。不要根据“开通/关闭”简介猜测开关字段或反转行为，不自动重试。
+
+官方数据字典：temp/ 提供的10份相关字典精简后嵌入 temu/dictionary/data/，只删除重复 source_text，保留 data 与版本/适用性元数据；完整资料归档 docs/data-dictionaries/。发货时效仅归档，不用于全托强制校验；不补造两份未提取的半托字典。Load 不依赖 temp/docs/工作目录或网络，LoadFS 接受调用方维护的完整快照，各实例独立。CheckDictionaries 显式调用且只返回英文建议，不改写商品参数、不自动进入 HTTP 调用；半托请求跳过全托条件检查，车型条件和 Unicode 计数边界保留待核实。省份ID用int64，尺码classId不得替代sizeTemplateId，定制工艺外层键不猜测含义。

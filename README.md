@@ -55,3 +55,5 @@ func main() {
 方法名由接口名按点分词转为大驼峰，例如 `bg.glo.goods.add` 对应 `BgGloGoodsAdd`。业务模型分别从 `temu/category`、`temu/product`、`temu/edit`、`temu/image`、`temu/jit` 导入；鉴权参数和签名由客户端添加。
 
 完整调用示例见 [examples](examples/README.md)，该目录为独立模块，不包含在 SDK 的模块下载包中。
+
+官方字典从 `temu/dictionary` 加载，发品模型可显式调用 `request.CheckDictionaries(snapshot)` 预检查；[使用说明](temu/dictionary/README.md)。

@@ -15,7 +15,7 @@ type BgGloGoodsAddRequest struct {
 	CarouselImageURLs             []string                           `json:"carouselImageUrls,omitzero"`              // 可选；Commodity Carousel, not required for apparel category, will be aggregated from skc
 	ProductOuterPackageImageReqs  []ProductOuterPackageImageRequest  `json:"productOuterPackageImageReqs,omitzero"`   // 可选；Outer Packaging Image
 	CopyFromProductID             int64                              `json:"copyFromProductId,omitempty"`             // 可选；Replicated Source Product ID
-	ProductName                   string                             `json:"productName"`                             // 必填；Product Name
+	ProductName                   string                             `json:"productName"`                             // 必填；Product Name；按一级类目加权计数，可显式调用 CheckDictionaries 预检查
 	ProductI18nReqs               []ProductI18nRequest               `json:"productI18nReqs,omitzero"`                // 可选；Product Multilingual Information Request
 	SellOutProductIDSrc           *int64                             `json:"sellOutProductIdSrc,omitempty"`           // 可选；Sold Out Product ID Src
 	ProductShipmentReq            *ProductShipmentRequest            `json:"productShipmentReq,omitempty"`            // 可选；Product Delivery Information Request
@@ -25,7 +25,7 @@ type BgGloGoodsAddRequest struct {
 	ShowSizeTemplateIDs           []int64                            `json:"showSizeTemplateIds,omitzero"`            // 可选；Key Display Size Table Template ID List
 	Cat2ID                        int64                              `json:"cat2Id"`                                  // 必填；Secondary Category ID, pass 0 if none
 	ProductSpecPropertyReqs       []ProductSpecPropertyRequest       `json:"productSpecPropertyReqs"`                 // 必填；Product Specification Attribute
-	VehicleLibraryRelationReqList []VehicleLibraryRelationRequest    `json:"vehicleLibraryRelationReqList,omitzero"`  // 可选；Vehicle Model Library Configuration
+	VehicleLibraryRelationReqList []VehicleLibraryRelationRequest    `json:"vehicleLibraryRelationReqList,omitzero"`  // 可选；Vehicle Model Library Configuration；字典命中后仍须区分见详情/通用条件
 	ProductCarouseVideoReqList    []ProductCarouseVideoRequest       `json:"productCarouseVideoReqList,omitzero"`     // 可选；Carousel Video
 	GoodsLayerDecorationReqs      []GoodsLayerDecorationRequest      `json:"goodsLayerDecorationReqs,omitzero"`       // 可选；Product Details Decoration
 	ProductPropertyReqs           []ProductPropertyRequest           `json:"productPropertyReqs"`                     // 必填；Product Attributes
@@ -33,7 +33,7 @@ type BgGloGoodsAddRequest struct {
 	MaterialMultiLanguages        []string                           `json:"materialMultiLanguages,omitzero"`         // 可选；Image Multilingual List
 	ProductWarehouseRouteReq      *ProductWarehouseRouteRequest      `json:"productWarehouseRouteReq,omitempty"`      // 可选；Commodity Warehouse Routing Request
 	GoodsModelReqs                []GoodsModelRequest                `json:"goodsModelReqs,omitzero"`                 // 可选；Product Model List Request
-	SizeTemplateID                int64                              `json:"sizeTemplateId,omitempty"`                // 可选；Size Chart Template ID
+	SizeTemplateID                int64                              `json:"sizeTemplateId,omitempty"`                // 可选；Size Chart Template ID；不是字典中的尺码表 classId
 	ProductOuterPackageReq        *ProductOuterPackageRequest        `json:"productOuterPackageReq,omitempty"`        // 可选；Product Outer Packaging Information
 	SourceInvitationID            int64                              `json:"sourceInvitationId,omitempty"`            // 可选；Source Invitation ID
 	SensitiveTransNormalFileReqs  []SensitiveTransNormalFileRequest  `json:"sensitiveTransNormalFileReqs,omitzero"`   // 可选；Sensitive Product Conversion to General Proof Document List
@@ -251,7 +251,7 @@ type ProductOriginCertFiles struct {
 
 // ProductOrigin Product Origin
 type ProductOrigin struct {
-	Region2ID        int64  `json:"region2Id,omitempty"` // 可选；Secondary Region ID
+	Region2ID        int64  `json:"region2Id,omitempty"` // 可选；Secondary Region ID；中国省份使用 Temu int64 ID，不是行政区划编码
 	Region1ShortName string `json:"region1ShortName"`    // 必填；First-Level Region Abbreviation (Two-Character Code)
 }
 
@@ -292,7 +292,7 @@ type ProductSKUMultiPackRequest struct {
 	TotalNetContent         *TotalNetContent             `json:"totalNetContent,omitempty"`         // 可选；Total Net Content
 	PieceNewUnitCode        int64                        `json:"pieceNewUnitCode,omitempty"`        // 可选；Unit, 1: piece
 	SKUClassification       int64                        `json:"skuClassification,omitempty"`       // 可选；Sku Category, 1: Single Product, 2: Combination Set, 3: Mixed Suite
-	NumberOfPiecesNew       int64                        `json:"numberOfPiecesNew,omitempty"`       // 可选；Total quantity contained
+	NumberOfPiecesNew       int64                        `json:"numberOfPiecesNew,omitempty"`       // 可选；Total quantity contained；全托部分类目必填，见官方字典
 	PieceUnitCode           int64                        `json:"pieceUnitCode,omitempty"`           // 可选；Unit per Item, 1: Piece, 2: Pair, 3: Pack
 }
 
